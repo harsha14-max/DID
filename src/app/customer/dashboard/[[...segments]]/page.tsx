@@ -16,6 +16,13 @@ import DigitalWallet from '@/components/customer/my-credit/DigitalWallet'
 import CreditScore from '@/components/customer/my-credit/CreditScore'
 import LoanApplications from '@/components/customer/my-credit/LoanApplications'
 import PrivacyControls from '@/components/customer/my-credit/PrivacyControls'
+
+// Import Digital Wallet components
+import DigitalWalletDashboard from '@/components/customer/digital-wallet/DigitalWalletDashboard'
+import DigitalWalletCredentials from '@/components/customer/digital-wallet/DigitalWalletCredentials'
+import DigitalWalletCreditScore from '@/components/customer/digital-wallet/DigitalWalletCreditScore'
+import DigitalWalletLoanApplications from '@/components/customer/digital-wallet/DigitalWalletLoanApplications'
+import DigitalWalletDIDSecurity from '@/components/customer/digital-wallet/DigitalWalletDIDSecurity'
 import { 
   MessageSquare, 
   Star, 
@@ -313,6 +320,7 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
     { id: 'tickets', label: 'Tickets', icon: MessageSquare },
     { id: 'ratings', label: 'Ratings', icon: Star },
     { id: 'services', label: 'Services', icon: Monitor },
+    { id: 'digital-wallet', label: 'Digital Wallet', icon: CreditCard },
     { id: 'my-credit', label: 'My Credit', icon: CreditCard },
     { id: 'help', label: 'Help', icon: HelpCircle }
   ]
@@ -336,6 +344,13 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
       { id: 'status', label: 'System Status' },
       { id: 'health', label: 'Health Check' },
       { id: 'incidents', label: 'Incidents' }
+    ],
+    'digital-wallet': [
+      { id: 'dashboard', label: 'Dashboard' },
+      { id: 'credentials', label: 'My Credentials' },
+      { id: 'credit-score', label: 'Credit Score' },
+      { id: 'loan-applications', label: 'Loan Applications' },
+      { id: 'did-security', label: 'DID & Security' }
     ],
     'my-credit': [
       { id: 'digital-wallet', label: 'Digital Wallet' },
@@ -459,6 +474,7 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
         {activeTab === 'tickets' && <TicketsContent subTab={activeSubTab} />}
         {activeTab === 'ratings' && <RatingsContent subTab={activeSubTab} />}
         {activeTab === 'services' && <ServicesContent subTab={activeSubTab} user={user} />}
+        {activeTab === 'digital-wallet' && <DigitalWalletContent subTab={activeSubTab} userId={user?.id || ''} />}
         {activeTab === 'my-credit' && <MyCreditContent subTab={activeSubTab} userId={user?.id || ''} />}
         {activeTab === 'help' && <HelpContent subTab={activeSubTab} />}
       </div>
@@ -1806,6 +1822,24 @@ function ServicesContent({ subTab, user }: { subTab: string; user: any }) {
       </div>
     </div>
   )
+}
+
+// Digital Wallet Content Component
+function DigitalWalletContent({ subTab, userId }: { subTab: string; userId: string }) {
+  switch (subTab) {
+    case 'dashboard':
+      return <DigitalWalletDashboard userId={userId} />
+    case 'credentials':
+      return <DigitalWalletCredentials userId={userId} />
+    case 'credit-score':
+      return <DigitalWalletCreditScore userId={userId} />
+    case 'loan-applications':
+      return <DigitalWalletLoanApplications userId={userId} />
+    case 'did-security':
+      return <DigitalWalletDIDSecurity userId={userId} />
+    default:
+      return <DigitalWalletDashboard userId={userId} />
+  }
 }
 
 // My Credit Content Component
