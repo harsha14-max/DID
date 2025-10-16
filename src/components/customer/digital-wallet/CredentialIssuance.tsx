@@ -13,17 +13,27 @@ import {
   Copy, 
   RefreshCw,
   Key,
+  Lock,
+  Unlock,
+  Fingerprint,
+  Zap,
   Target,
   Award,
   Activity,
-  Plus,
-  X,
+  TrendingUp,
+  TrendingDown,
+  ArrowUpRight,
+  ArrowDownRight,
   MoreHorizontal,
   Edit,
   Trash2,
   ExternalLink,
   Info,
   HelpCircle,
+  X,
+  QrCode,
+  Scan,
+  Bell,
   FileText,
   BarChart3,
   PieChart,
@@ -39,97 +49,232 @@ import {
   Phone,
   MapPin,
   Star,
-  Zap,
-  Building2,
-  Droplets
+  Plus,
+  Minus,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Wifi,
+  WifiOff,
+  Cloud,
+  HardDrive,
+  Cpu,
+  MemoryStick,
+  Network,
+  Router,
+  Smartphone,
+  Laptop,
+  Globe,
+  Printer,
+  Camera,
+  Headphones,
+  Mic,
+  Video,
+  Truck,
+  Package,
+  Receipt,
+  CreditCard,
+  Banknote,
+  Coins,
+  Calculator,
+  Percent,
+  Clock3,
+  CheckCircle2,
+  XCircle,
+  AlertCircle
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
-import { supabase } from '@/lib/supabase/client'
 
-interface DigitalWalletCredentialsProps {
-  userId: string
+interface Issuer {
+  id: string
+  name: string
+  did: string
+  type: 'government' | 'financial' | 'utility' | 'employment' | 'education'
+  logo: string
+  verified: boolean
+  trustLevel: number
+  publicKey: string
+  description: string
+  active: boolean
 }
 
-export default function DigitalWalletCredentials({ userId }: DigitalWalletCredentialsProps) {
-  const [credentials, setCredentials] = useState<any[]>([])
+interface CredentialTemplate {
+  id: string
+  name: string
+  type: 'utility' | 'rental' | 'income' | 'service' | 'identity' | 'employment'
+  issuer: Issuer
+  fields: any[]
+  requiredFields: string[]
+  description: string
+  validityPeriod: number
+  icon: string
+  color: string
+}
+
+interface IssuedCredential {
+  id: string
+  templateId: string
+  template: CredentialTemplate
+  userId: string
+  data: Record<string, any>
+  signature: string
+  issuedAt: string
+  expiresAt?: string
+  status: 'active' | 'expired' | 'revoked'
+  verificationUrl: string
+  metadata: {
+    issuerSignature: string
+    verificationMethod: string
+    trustScore: number
+  }
+}
+
+interface CredentialIssuanceProps {
+  userId: string
+  onCredentialIssued?: (credential: IssuedCredential) => void
+}
+
+export default function CredentialIssuance({ userId, onCredentialIssued }: CredentialIssuanceProps) {
+  const [issuers, setIssuers] = useState<Issuer[]>([])
+  const [templates, setTemplates] = useState<CredentialTemplate[]>([])
+  const [issuedCredentials, setIssuedCredentials] = useState<IssuedCredential[]>([])
   const [loading, setLoading] = useState(false)
   const [showIssuanceModal, setShowIssuanceModal] = useState(false)
+  const [selectedTemplate, setSelectedTemplate] = useState<CredentialTemplate | null>(null)
 
   useEffect(() => {
-    loadCredentials()
+    loadIssuers()
+    loadTemplates()
+    loadIssuedCredentials()
   }, [userId])
 
-  const loadCredentials = async () => {
-    try {
-      setLoading(true)
-      
-      // Load credentials from Supabase
-      const { data: supabaseCredentials, error } = await supabase
-        .from('verifiable_credentials')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('status', 'valid')
-        .order('issued_at', { ascending: false })
-
-      if (error) {
-        console.error('Error loading credentials:', error)
-        toast.error('Failed to load credentials')
-        return
-      }
-
-      // Transform Supabase data to match our interface
-      const transformedCredentials = supabaseCredentials?.map(cred => ({
-        id: cred.id,
-        name: cred.credential_type,
-        type: getCredentialType(cred.credential_type),
-        issuer: getIssuerName(cred.issuer_did),
-        logo: getIssuerLogo(cred.credential_type),
-        issuedAt: cred.issued_at,
-        expiresAt: cred.expires_at,
-        status: cred.status === 'valid' ? 'active' : cred.status,
+  const loadIssuers = () => {
+    const mockIssuers: Issuer[] = [
+      {
+        id: 'issuer_1',
+        name: 'CredX Government Services',
+        did: 'did:gov:credX',
+        type: 'government',
+        logo: '🏛️',
+        verified: true,
         trustLevel: 95,
-        description: `Verifiable credential issued by ${getIssuerName(cred.issuer_did)}`,
-        approvedMessage: '✅ Approved and verified by issuer',
-        credentialId: cred.credential_id,
-        holderDid: cred.holder_did,
-        metadata: cred.credential_data || {}
-      })) || []
+        publicKey: 'gov_pub_key_123',
+        description: 'Official government credential issuer',
+        active: true
+      },
+      {
+        id: 'issuer_2',
+        name: 'Utility Verification Corp',
+        did: 'did:utility:verification',
+        type: 'utility',
+        logo: '⚡',
+        verified: true,
+        trustLevel: 88,
+        publicKey: 'utility_pub_key_456',
+        description: 'Verified utility payment issuer',
+        active: true
+      },
+      {
+        id: 'issuer_3',
+        name: 'Employment Verification Inc',
+        did: 'did:employment:verification',
+        type: 'employment',
+        logo: '💼',
+        verified: true,
+        trustLevel: 92,
+        publicKey: 'employment_pub_key_789',
+        description: 'Employment and income verification',
+        active: true
+      },
+      {
+        id: 'issuer_4',
+        name: 'Financial Services Trust',
+        did: 'did:financial:trust',
+        type: 'financial',
+        logo: '🏦',
+        verified: true,
+        trustLevel: 90,
+        publicKey: 'financial_pub_key_012',
+        description: 'Financial institution credential issuer',
+        active: true
+      }
+    ]
+    
+    setIssuers(mockIssuers)
+  }
 
-      setCredentials(transformedCredentials)
+  const loadTemplates = () => {
+    const mockTemplates: CredentialTemplate[] = [
+      {
+        id: 'template_1',
+        name: 'Utility Payment Verification',
+        type: 'utility',
+        issuer: issuers.find(i => i.id === 'issuer_2') || issuers[0],
+        fields: [],
+        requiredFields: ['utilityCompany', 'accountNumber', 'paymentAmount'],
+        description: 'Verify your utility payment history',
+        validityPeriod: 365,
+        icon: '⚡',
+        color: 'text-blue-600'
+      },
+      {
+        id: 'template_2',
+        name: 'Employment Verification',
+        type: 'employment',
+        issuer: issuers.find(i => i.id === 'issuer_3') || issuers[0],
+        fields: [],
+        requiredFields: ['employerName', 'jobTitle', 'monthlyIncome'],
+        description: 'Verify your employment and income',
+        validityPeriod: 180,
+        icon: '💼',
+        color: 'text-green-600'
+      },
+      {
+        id: 'template_3',
+        name: 'Identity Verification',
+        type: 'identity',
+        issuer: issuers.find(i => i.id === 'issuer_1') || issuers[0],
+        fields: [],
+        requiredFields: ['fullName', 'dateOfBirth', 'address'],
+        description: 'Verify your identity information',
+        validityPeriod: 730,
+        icon: '🆔',
+        color: 'text-purple-600'
+      },
+      {
+        id: 'template_4',
+        name: 'Rental Payment History',
+        type: 'rental',
+        issuer: issuers.find(i => i.id === 'issuer_2') || issuers[0],
+        fields: [],
+        requiredFields: ['landlordName', 'propertyAddress', 'monthlyRent'],
+        description: 'Verify your rental payment history',
+        validityPeriod: 365,
+        icon: '🏠',
+        color: 'text-orange-600'
+      }
+    ]
+    
+    setTemplates(mockTemplates)
+  }
+
+  const loadIssuedCredentials = () => {
+    try {
+      const storedCredentials = localStorage.getItem(`issued_credentials_${userId}`)
+      if (storedCredentials) {
+        const parsedCredentials = JSON.parse(storedCredentials)
+        setIssuedCredentials(parsedCredentials)
+      }
     } catch (error) {
-      console.error('Error loading credentials:', error)
-      toast.error('Failed to load credentials')
-    } finally {
-      setLoading(false)
+      console.error('Error loading issued credentials:', error)
     }
   }
 
-  const getCredentialType = (credentialType: string) => {
-    if (credentialType.toLowerCase().includes('utility')) return 'utility'
-    if (credentialType.toLowerCase().includes('income')) return 'income'
-    if (credentialType.toLowerCase().includes('address')) return 'address'
-    if (credentialType.toLowerCase().includes('employment')) return 'employment'
-    return 'general'
-  }
-
-  const getIssuerName = (issuerDid: string) => {
-    if (issuerDid.includes('landlord')) return 'Property Management Co.'
-    if (issuerDid.includes('electric')) return 'ElectroCorp Utilities'
-    if (issuerDid.includes('utility')) return 'AquaFlow Water Services'
-    if (issuerDid.includes('gig')) return 'FlexWork Platform'
-    return 'Trusted Issuer'
-  }
-
-  const getIssuerLogo = (credentialType: string) => {
-    if (credentialType.toLowerCase().includes('utility')) return '⚡'
-    if (credentialType.toLowerCase().includes('income')) return '💼'
-    if (credentialType.toLowerCase().includes('address')) return '🏠'
-    if (credentialType.toLowerCase().includes('employment')) return '💼'
-    return '🏛️'
-  }
-
   const issueCredential = async () => {
+    if (!selectedTemplate) return
+
     setLoading(true)
     
     try {
@@ -137,27 +282,45 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
 
       const credentialId = `cred_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
       const now = new Date()
-      const expiresAt = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000) // 1 year
+      const expiresAt = selectedTemplate.validityPeriod > 0 ? 
+        new Date(now.getTime() + selectedTemplate.validityPeriod * 24 * 60 * 60 * 1000) : 
+        undefined
 
-      const newCredential = {
+      const signature = `sig_${credentialId}_${btoa(JSON.stringify({
+        issuer: selectedTemplate.issuer.did,
+        template: selectedTemplate.id,
+        timestamp: now.toISOString()
+      }))}`
+
+      const issuedCredential: IssuedCredential = {
         id: credentialId,
-        name: 'Utility Payment Verification',
-        type: 'utility',
-        issuer: 'CredX Government Services',
-        logo: '⚡',
+        templateId: selectedTemplate.id,
+        template: selectedTemplate,
+        userId,
+        data: {},
+        signature,
         issuedAt: now.toISOString(),
-        expiresAt: expiresAt.toISOString(),
+        expiresAt: expiresAt?.toISOString(),
         status: 'active',
-        trustLevel: 95,
-        description: 'Verified utility payment history'
+        verificationUrl: `https://verify.credX.com/credential/${credentialId}`,
+        metadata: {
+          issuerSignature: signature,
+          verificationMethod: 'digital_signature',
+          trustScore: selectedTemplate.issuer.trustLevel
+        }
       }
 
-      const updatedCredentials = [...credentials, newCredential]
+      const updatedCredentials = [...issuedCredentials, issuedCredential]
       localStorage.setItem(`issued_credentials_${userId}`, JSON.stringify(updatedCredentials))
-      setCredentials(updatedCredentials)
+      setIssuedCredentials(updatedCredentials)
       
       toast.success('Credential issued successfully!')
       setShowIssuanceModal(false)
+      setSelectedTemplate(null)
+      
+      if (onCredentialIssued) {
+        onCredentialIssued(issuedCredential)
+      }
       
     } catch (error) {
       console.error('Error issuing credential:', error)
@@ -212,19 +375,13 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">My Credentials</h2>
-          <p className="text-gray-600">Manage your verifiable credentials</p>
+          <h2 className="text-3xl font-bold text-gray-900">Credential Issuance</h2>
+          <p className="text-gray-600">Issue and manage verifiable credentials</p>
         </div>
-        <div className="flex space-x-2">
-          <Button variant="outline" onClick={loadCredentials} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowIssuanceModal(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Issue Credential
-          </Button>
-        </div>
+        <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowIssuanceModal(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Issue Credential
+        </Button>
       </div>
 
       {/* Quick Stats */}
@@ -233,8 +390,8 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">Total Credentials</p>
-                <p className="text-3xl font-bold text-gray-900">{credentials.length}</p>
+                <p className="text-sm font-medium text-gray-600 mb-1">Total Issued</p>
+                <p className="text-3xl font-bold text-gray-900">{issuedCredentials.length}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Shield className="h-6 w-6 text-blue-600" />
@@ -249,7 +406,7 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">Active</p>
                 <p className="text-3xl font-bold text-green-600">
-                  {credentials.filter(c => c.status === 'active').length}
+                  {issuedCredentials.filter(c => c.status === 'active').length}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -265,7 +422,7 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">Expired</p>
                 <p className="text-3xl font-bold text-red-600">
-                  {credentials.filter(c => c.status === 'expired').length}
+                  {issuedCredentials.filter(c => c.status === 'expired').length}
                 </p>
               </div>
               <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
@@ -281,8 +438,8 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">Trust Score</p>
                 <p className="text-3xl font-bold text-purple-600">
-                  {credentials.length > 0 ? 
-                    Math.round(credentials.reduce((sum, c) => sum + (c.trustLevel || 0), 0) / credentials.length) : 
+                  {issuedCredentials.length > 0 ? 
+                    Math.round(issuedCredentials.reduce((sum, c) => sum + c.metadata.trustScore, 0) / issuedCredentials.length) : 
                     0
                   }
                 </p>
@@ -306,48 +463,7 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              {
-                id: 'template_1',
-                name: 'Utility Payment Verification',
-                type: 'utility',
-                issuer: 'Utility Verification Corp',
-                logo: '⚡',
-                description: 'Verify your utility payment history',
-                validityPeriod: 365,
-                trustLevel: 88
-              },
-              {
-                id: 'template_2',
-                name: 'Employment Verification',
-                type: 'employment',
-                issuer: 'Employment Verification Inc',
-                logo: '💼',
-                description: 'Verify your employment and income',
-                validityPeriod: 180,
-                trustLevel: 92
-              },
-              {
-                id: 'template_3',
-                name: 'Identity Verification',
-                type: 'identity',
-                issuer: 'CredX Government Services',
-                logo: '🆔',
-                description: 'Verify your identity information',
-                validityPeriod: 730,
-                trustLevel: 95
-              },
-              {
-                id: 'template_4',
-                name: 'Rental Payment History',
-                type: 'rental',
-                issuer: 'Property Management Co',
-                logo: '🏠',
-                description: 'Verify your rental payment history',
-                validityPeriod: 365,
-                trustLevel: 85
-              }
-            ].map((template, index) => (
+            {templates.map((template, index) => (
               <motion.div
                 key={template.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -360,11 +476,11 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-3">
                         <div className={`w-12 h-12 ${getCredentialTypeBgColor(template.type)} rounded-lg flex items-center justify-center`}>
-                          <span className="text-2xl">{template.logo}</span>
+                          <span className="text-2xl">{template.icon}</span>
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">{template.name}</h4>
-                          <p className="text-sm text-gray-600">{template.issuer}</p>
+                          <p className="text-sm text-gray-600">{template.issuer.name}</p>
                         </div>
                       </div>
                       <Badge className="bg-green-100 text-green-800">
@@ -382,15 +498,15 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
                       </div>
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-500">Trust Level:</span>
-                        <span className="font-medium">{template.trustLevel}%</span>
+                        <span className="font-medium">{template.issuer.trustLevel}%</span>
                       </div>
                     </div>
                     
                     <Button 
                       className="w-full bg-blue-600 hover:bg-blue-700"
                       onClick={() => {
-                        // Issue credential directly
-                        issueCredential()
+                        setSelectedTemplate(template)
+                        setShowIssuanceModal(true)
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
@@ -405,7 +521,7 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
       </Card>
 
       {/* Issued Credentials */}
-      {credentials.length > 0 && (
+      {issuedCredentials.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -416,8 +532,8 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {credentials.map((credential, index) => {
-                const Icon = getCredentialTypeIcon(credential.type)
+              {issuedCredentials.map((credential, index) => {
+                const Icon = getCredentialTypeIcon(credential.template.type)
                 
                 return (
                   <motion.div
@@ -428,22 +544,15 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
                     className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className={`w-12 h-12 ${getCredentialTypeBgColor(credential.type)} rounded-lg flex items-center justify-center`}>
-                        <Icon className={`h-6 w-6 ${getCredentialTypeColor(credential.type)}`} />
+                      <div className={`w-12 h-12 ${getCredentialTypeBgColor(credential.template.type)} rounded-lg flex items-center justify-center`}>
+                        <Icon className={`h-6 w-6 ${getCredentialTypeColor(credential.template.type)}`} />
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900">{credential.name}</h4>
+                        <h4 className="font-medium text-gray-900">{credential.template.name}</h4>
                         <p className="text-sm text-gray-600">
-                          Issued by {credential.issuer}
+                          Issued by {credential.template.issuer.name}
                         </p>
-                        {credential.approvedMessage && (
-                          <div className="mt-1">
-                            <Badge className="bg-green-100 text-green-800 text-xs">
-                              {credential.approvedMessage}
-                            </Badge>
-                          </div>
-                        )}
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-500">
                           Issued: {formatDate(credential.issuedAt)}
                           {credential.expiresAt && ` • Expires: ${formatDate(credential.expiresAt)}`}
                         </p>
@@ -469,27 +578,8 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
         </Card>
       )}
 
-      {/* Empty State */}
-      {credentials.length === 0 && (
-        <Card>
-          <CardContent className="p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Shield className="h-8 w-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Credentials Yet</h3>
-            <p className="text-gray-600 mb-6">
-              You haven't issued any verifiable credentials yet. Issue your first credential to get started.
-            </p>
-            <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowIssuanceModal(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Issue Your First Credential
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Issuance Modal */}
-      {showIssuanceModal && (
+      {showIssuanceModal && selectedTemplate && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
@@ -501,10 +591,10 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
             
             <div className="space-y-4">
               <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                <div className="text-2xl">⚡</div>
+                <div className="text-2xl">{selectedTemplate.icon}</div>
                 <div>
-                  <h3 className="font-semibold">Utility Payment Verification</h3>
-                  <p className="text-sm text-gray-600">Verify your utility payment history</p>
+                  <h3 className="font-semibold">{selectedTemplate.name}</h3>
+                  <p className="text-sm text-gray-600">{selectedTemplate.description}</p>
                 </div>
               </div>
               
@@ -513,15 +603,15 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-blue-700">Issuer:</span>
-                    <span className="font-semibold text-blue-900 ml-2">Utility Verification Corp</span>
+                    <span className="font-semibold text-blue-900 ml-2">{selectedTemplate.issuer.name}</span>
                   </div>
                   <div>
                     <span className="text-blue-700">Validity:</span>
-                    <span className="font-semibold text-blue-900 ml-2">365 days</span>
+                    <span className="font-semibold text-blue-900 ml-2">{selectedTemplate.validityPeriod} days</span>
                   </div>
                   <div>
                     <span className="text-blue-700">Trust Level:</span>
-                    <span className="font-semibold text-blue-900 ml-2">88%</span>
+                    <span className="font-semibold text-blue-900 ml-2">{selectedTemplate.issuer.trustLevel}%</span>
                   </div>
                   <div>
                     <span className="text-blue-700">Signature:</span>

@@ -13,6 +13,7 @@ import { CredXLogo } from '@/components/ui/credX-logo'
 
 // Import My Credit components
 import DigitalWallet from '@/components/customer/my-credit/DigitalWallet'
+import VerifiedCredentials from '@/components/customer/my-credit/VerifiedCredentials'
 import CreditScore from '@/components/customer/my-credit/CreditScore'
 import LoanApplications from '@/components/customer/my-credit/LoanApplications'
 import PrivacyControls from '@/components/customer/my-credit/PrivacyControls'
@@ -20,6 +21,7 @@ import PrivacyControls from '@/components/customer/my-credit/PrivacyControls'
 // Import Digital Wallet components
 import DigitalWalletDashboard from '@/components/customer/digital-wallet/DigitalWalletDashboard'
 import DigitalWalletCredentials from '@/components/customer/digital-wallet/DigitalWalletCredentials'
+import VCGeneration from '@/components/customer/digital-wallet/VCGeneration'
 import DigitalWalletCreditScore from '@/components/customer/digital-wallet/DigitalWalletCreditScore'
 import DigitalWalletLoanApplications from '@/components/customer/digital-wallet/DigitalWalletLoanApplications'
 import DigitalWalletDIDSecurity from '@/components/customer/digital-wallet/DigitalWalletDIDSecurity'
@@ -278,8 +280,14 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
   }
 
   const handleSignOut = async () => {
-    await signOut()
-    router.push('/')
+    try {
+      await signOut()
+      router.push('/auth/login')
+    } catch (error) {
+      console.error('Error signing out:', error)
+      // Still redirect to login page even if signOut fails
+      router.push('/auth/login')
+    }
   }
 
   const formatDate = (dateString: string) => {
@@ -322,6 +330,7 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
     { id: 'services', label: 'Services', icon: Monitor },
     { id: 'digital-wallet', label: 'Digital Wallet', icon: CreditCard },
     { id: 'my-credit', label: 'My Credit', icon: CreditCard },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'help', label: 'Help', icon: HelpCircle }
   ]
 
@@ -348,12 +357,14 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
     'digital-wallet': [
       { id: 'dashboard', label: 'Dashboard' },
       { id: 'credentials', label: 'My Credentials' },
+      { id: 'vc-generation', label: 'VC Generation' },
       { id: 'credit-score', label: 'Credit Score' },
       { id: 'loan-applications', label: 'Loan Applications' },
       { id: 'did-security', label: 'DID & Security' }
     ],
     'my-credit': [
-      { id: 'digital-wallet', label: 'Digital Wallet' },
+      { id: 'did-generation', label: 'DID Generation' },
+      { id: 'verified-credentials', label: 'Verified Credentials' },
       { id: 'credit-score', label: 'Credit Score' },
       { id: 'loan-applications', label: 'Loan Applications' },
       { id: 'privacy-controls', label: 'Privacy Controls' }
@@ -434,13 +445,19 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
               <Button variant="ghost" size="sm">
                 <Settings className="h-4 w-4" />
               </Button>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                   <User className="h-4 w-4 text-white" />
                 </div>
                 <span className="text-sm font-medium">{user?.full_name || 'Test Customer'}</span>
-                <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                  <LogOut className="h-4 w-4" />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleSignOut}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                >
+                  <LogOut className="h-4 w-4 mr-1" />
+                  Logout
                 </Button>
               </div>
             </div>
@@ -476,6 +493,7 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
         {activeTab === 'services' && <ServicesContent subTab={activeSubTab} user={user} />}
         {activeTab === 'digital-wallet' && <DigitalWalletContent subTab={activeSubTab} userId={user?.id || ''} />}
         {activeTab === 'my-credit' && <MyCreditContent subTab={activeSubTab} userId={user?.id || ''} />}
+        {activeTab === 'notifications' && <NotificationsContent userId={user?.id || ''} />}
         {activeTab === 'help' && <HelpContent subTab={activeSubTab} />}
       </div>
     </div>
@@ -1831,6 +1849,8 @@ function DigitalWalletContent({ subTab, userId }: { subTab: string; userId: stri
       return <DigitalWalletDashboard userId={userId} />
     case 'credentials':
       return <DigitalWalletCredentials userId={userId} />
+    case 'vc-generation':
+      return <VCGeneration />
     case 'credit-score':
       return <DigitalWalletCreditScore userId={userId} />
     case 'loan-applications':
@@ -1844,17 +1864,22 @@ function DigitalWalletContent({ subTab, userId }: { subTab: string; userId: stri
 
 // My Credit Content Component
 function MyCreditContent({ subTab, userId }: { subTab: string; userId: string }) {
+  // Add a key to force re-render when switching tabs
+  const componentKey = `${subTab}-${userId}`
+  
   switch (subTab) {
-    case 'digital-wallet':
-      return <DigitalWallet userId={userId} />
+    case 'did-generation':
+      return <DigitalWallet key={componentKey} userId={userId} onCredentialAdded={() => {}} />
+    case 'verified-credentials':
+      return <VerifiedCredentials key={componentKey} />
     case 'credit-score':
-      return <CreditScore userId={userId} showBreakdown={true} />
+      return <CreditScore key={componentKey} userId={userId} showBreakdown={true} />
     case 'loan-applications':
-      return <LoanApplications userId={userId} />
+      return <LoanApplications key={componentKey} userId={userId} onApplicationSubmitted={() => {}} />
     case 'privacy-controls':
-      return <PrivacyControls userId={userId} />
+      return <PrivacyControls key={componentKey} userId={userId} />
     default:
-      return <DigitalWallet userId={userId} />
+      return <DigitalWallet key={componentKey} userId={userId} onCredentialAdded={() => {}} />
   }
 }
 
@@ -2034,6 +2059,187 @@ function HelpContent({ subTab }: { subTab: string }) {
           </div>
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+// Notifications Content Component
+function NotificationsContent({ userId }: { userId: string }) {
+  const [notifications, setNotifications] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadNotifications()
+  }, [userId])
+
+  // Add a refresh mechanism when component mounts
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadNotifications()
+    }, 30000) // Refresh every 30 seconds
+
+    return () => clearInterval(interval)
+  }, [userId])
+
+  const loadNotifications = async () => {
+    try {
+      setLoading(true)
+      
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error loading notifications:', error)
+        return
+      }
+
+      setNotifications(data || [])
+    } catch (error) {
+      console.error('Error loading notifications:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const markAsRead = async (notificationId: string) => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ 
+          is_read: true,
+          read_at: new Date().toISOString()
+        })
+        .eq('id', notificationId)
+
+      if (error) {
+        console.error('Error marking notification as read:', error)
+        return
+      }
+
+      // Update local state
+      setNotifications(prev => 
+        prev.map(notif => 
+          notif.id === notificationId 
+            ? { ...notif, is_read: true, read_at: new Date().toISOString() }
+            : notif
+        )
+      )
+    } catch (error) {
+      console.error('Error marking notification as read:', error)
+    }
+  }
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'loan_approval':
+        return <CheckCircle className="h-5 w-5 text-green-600" />
+      case 'ticket_update':
+        return <MessageSquare className="h-5 w-5 text-blue-600" />
+      case 'approval_request':
+        return <AlertTriangle className="h-5 w-5 text-yellow-600" />
+      default:
+        return <Bell className="h-5 w-5 text-gray-600" />
+    }
+  }
+
+  const getNotificationBadgeColor = (type: string) => {
+    switch (type) {
+      case 'loan_approval':
+        return 'bg-green-100 text-green-800'
+      case 'ticket_update':
+        return 'bg-blue-100 text-blue-800'
+      case 'approval_request':
+        return 'bg-yellow-100 text-yellow-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Notifications</h2>
+          <p className="text-gray-600">Stay updated with your account activity</p>
+        </div>
+        <Button variant="outline" size="sm" onClick={loadNotifications}>
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Refresh
+        </Button>
+      </div>
+
+      {notifications.length === 0 ? (
+        <Card>
+          <CardContent className="text-center py-12">
+            <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No notifications yet</h3>
+            <p className="text-gray-600">You'll see important updates and alerts here</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {notifications.map((notification) => (
+            <Card 
+              key={notification.id} 
+              className={`transition-colors hover:bg-gray-50 ${
+                !notification.is_read ? 'border-l-4 border-l-blue-500 bg-blue-50' : ''
+              }`}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0 mt-1">
+                    {getNotificationIcon(notification.type)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-sm font-medium text-gray-900">
+                        {notification.title}
+                      </h4>
+                      <div className="flex items-center space-x-2">
+                        <Badge className={getNotificationBadgeColor(notification.type)}>
+                          {notification.type.replace('_', ' ')}
+                        </Badge>
+                        {!notification.is_read && (
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {notification.message}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500">
+                        {new Date(notification.created_at).toLocaleString()}
+                      </span>
+                      {!notification.is_read && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => markAsRead(notification.id)}
+                          className="text-blue-600 hover:text-blue-700"
+                        >
+                          Mark as read
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

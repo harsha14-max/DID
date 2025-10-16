@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { 
-  Home, MessageSquare, Users, Building2, Package, Shield, RotateCcw,
-  BarChart3, BookOpen, Plug, Settings, RefreshCw, Download,
+  Home, MessageSquare, Users, Package, Shield, RotateCcw,
+  BarChart3, BookOpen, Settings, RefreshCw, Download,
   ChevronDown, ChevronRight, User, Clock, AlertTriangle, CheckCircle, Plus, Search, Filter, Eye, Edit, MoreHorizontal, X, Server, Star, LogOut, CreditCard
 } from 'lucide-react'
 import { useAuth } from '@/components/providers/auth-provider'
@@ -16,13 +16,11 @@ import { supabase } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 
 // Import page components directly for inline rendering
-import AccountsPage from '@/components/pages/admin/accounts'
 import AnalyticsPage from '@/components/pages/admin/analytics'
 import AssetsPage from '@/components/pages/admin/assets'
 import RulesEnginePage from '@/components/pages/admin/rules-engine'
 import WorkflowPage from '@/components/pages/admin/workflows'
 import KnowledgePage from '@/components/pages/admin/knowledge'
-import IntegrationsPage from '@/components/pages/admin/integrations'
 import SettingsPage from '@/components/pages/admin/settings'
 
 // Import Credit Identity components
@@ -30,6 +28,12 @@ import DIDManagement from '@/components/admin/credit-identity/DIDManagement'
 import CredentialIssuance from '@/components/admin/credit-identity/CredentialIssuance'
 import LenderManagement from '@/components/admin/credit-identity/LenderManagement'
 import CreditAnalytics from '@/components/admin/credit-identity/CreditAnalytics'
+import CreditIdentityDashboard from '@/components/admin/credit-identity/CreditIdentityDashboard'
+import VCVerificationQueue from '@/components/admin/credit-identity/VCVerificationQueue'
+import VCTemplatesManagement from '@/components/admin/credit-identity/VCTemplatesManagement'
+import CredentialManagement from '@/components/admin/credit-identity/CredentialManagement'
+import UserCreditProfiles from '@/components/admin/credit-identity/UserCreditProfiles'
+import UserApproval from '@/components/admin/credit-identity/UserApproval'
 
 export default function AdminDashboard() {
   const router = useRouter()
@@ -291,14 +295,12 @@ export default function AdminDashboard() {
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'tickets', label: 'Tickets', icon: MessageSquare },
     { id: 'users', label: 'Users', icon: Users },
-    { id: 'accounts', label: 'Accounts', icon: Building2 },
     { id: 'assets', label: 'Assets', icon: Package },
     { id: 'rules', label: 'Rules Engine', icon: Shield },
     { id: 'workflow', label: 'Workflow', icon: RotateCcw },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'knowledge', label: 'Knowledge Base', icon: BookOpen },
     { id: 'credit-identity', label: 'Credit Identity', icon: CreditCard },
-    { id: 'integrations', label: 'Integrations', icon: Plug },
     { id: 'settings', label: 'Settings', icon: Settings }
   ]
 
@@ -316,12 +318,6 @@ export default function AdminDashboard() {
       { id: 'agents', label: 'Agents' },
       { id: 'customers', label: 'Customers' },
       { id: 'groups', label: 'Groups' }
-    ],
-    accounts: [
-      { id: 'enterprise', label: 'Enterprise' },
-      { id: 'small-business', label: 'Small Business' },
-      { id: 'individual', label: 'Individual' },
-      { id: 'settings', label: 'Account Settings' }
     ],
     assets: [
       { id: 'all', label: 'All Assets' },
@@ -357,20 +353,17 @@ export default function AdminDashboard() {
       { id: 'videos', label: 'Video Tutorials' },
       { id: 'categories', label: 'Categories' }
     ],
-    'credit-identity': [
-      { id: 'did-management', label: 'DID Management' },
-      { id: 'credential-issuance', label: 'Credential Issuance' },
-      { id: 'lender-management', label: 'Lender Management' },
-      { id: 'credit-analytics', label: 'Credit Analytics' }
-    ],
-    integrations: [
-      { id: 'all', label: 'All Integrations' },
-      { id: 'email', label: 'Email' },
-      { id: 'slack', label: 'Slack' },
-      { id: 'teams', label: 'Microsoft Teams' },
-      { id: 'api', label: 'API Management' },
-      { id: 'webhooks', label: 'Webhooks' }
-    ],
+      'credit-identity': [
+        { id: 'dashboard', label: 'Dashboard' },
+        { id: 'verification-queue', label: 'Verification Queue' },
+        { id: 'user-approval', label: 'User Approval' },
+        { id: 'vc-templates', label: 'VC Templates' },
+        { id: 'issue-credentials', label: 'Issue Credentials' },
+        { id: 'credential-management', label: 'Credential Management' },
+        { id: 'user-credit-profiles', label: 'User Credit Profiles' },
+        { id: 'lender-network', label: 'Lender Network' },
+        { id: 'system-analytics', label: 'System Analytics' }
+      ],
     settings: [
       { id: 'general', label: 'General' },
       { id: 'security', label: 'Security' },
@@ -926,16 +919,26 @@ export default function AdminDashboard() {
 
   const renderCreditIdentityContent = () => {
     switch (activeSubTab) {
-      case 'did-management':
-        return <DIDManagement userId={user?.id || ''} />
-      case 'credential-issuance':
+      case 'dashboard':
+        return <CreditIdentityDashboard />
+      case 'verification-queue':
+        return <VCVerificationQueue />
+      case 'user-approval':
+        return <UserApproval />
+      case 'vc-templates':
+        return <VCTemplatesManagement />
+      case 'issue-credentials':
         return <CredentialIssuance userId={user?.id || ''} />
-      case 'lender-management':
+      case 'credential-management':
+        return <CredentialManagement />
+      case 'user-credit-profiles':
+        return <UserCreditProfiles />
+      case 'lender-network':
         return <LenderManagement userId={user?.id || ''} />
-      case 'credit-analytics':
+      case 'system-analytics':
         return <CreditAnalytics userId={user?.id || ''} />
       default:
-        return <DIDManagement userId={user?.id || ''} />
+        return <CreditIdentityDashboard />
     }
   }
 
@@ -947,8 +950,6 @@ export default function AdminDashboard() {
         return renderTicketsContent()
       case 'users':
         return renderUsersContent()
-      case 'accounts':
-        return <AccountsPage />
       case 'analytics':
         return <AnalyticsPage />
       case 'assets':
@@ -961,8 +962,6 @@ export default function AdminDashboard() {
         return <KnowledgePage />
       case 'credit-identity':
         return renderCreditIdentityContent()
-      case 'integrations':
-        return <IntegrationsPage />
       case 'settings':
         return <SettingsPage />
       default:
