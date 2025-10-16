@@ -52,7 +52,7 @@ export function LiveChat({ className, isOpen = true, onClose, onMinimize }: Live
     const initialMessages: ChatMessage[] = [
       {
         id: '1',
-        content: 'Hello! Welcome to BSM Platform support. How can I help you today?',
+        content: 'Hello! Welcome to credX Platform support. How can I help you today?',
         sender: 'agent',
         timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString()
       },

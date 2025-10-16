@@ -1,5 +1,5 @@
 // =====================================================
-// BSM Platform - Zero-Knowledge Proof Generator
+// credX Platform - Zero-Knowledge Proof Generator
 // =====================================================
 // Utility for generating and verifying ZKPs for credit scoring
 

@@ -1,5 +1,5 @@
 // =====================================================
-// BSM Platform - DID Manager
+// credX Platform - DID Manager
 // =====================================================
 // Decentralized Identity management utilities
 
@@ -23,8 +23,8 @@ const simpleCrypto = {
 }
 
 export class DIDManager {
-  private readonly DID_METHOD = 'did:bsm'
-  private readonly ENCRYPTION_KEY = 'bsm-platform-did-key' // In production, use proper key management
+  private readonly DID_METHOD = 'did:credX'
+  private readonly ENCRYPTION_KEY = 'credX-platform-did-key' // In production, use proper key management
 
   /**
    * Create a new DID for a user
