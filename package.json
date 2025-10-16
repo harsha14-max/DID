@@ -46,6 +46,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
+    "@noble/ed25519": "^3.0.0",
+    "@noble/secp256k1": "^3.0.0",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.6",
@@ -64,7 +66,9 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "critters": "^0.0.23",
+    "crypto-js": "^4.2.0",
     "date-fns": "^2.30.0",
+    "did-jwt-vc": "^4.0.16",
     "framer-motion": "^10.18.0",
     "gsap": "^3.13.0",
     "howler": "^2.2.4",
@@ -94,10 +98,10 @@
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.180.0",
+    "uuid": "^13.0.0",
     "xlsx": "^0.18.5",
     "zod": "^3.22.4",
-    "zustand": "^4.4.7",
-    "crypto-js": "^4.2.0"
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.4",

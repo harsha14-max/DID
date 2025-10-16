@@ -1,5 +1,5 @@
-import { AdvancedWelcomePageSimple } from '@/components/advanced/AdvancedWelcomePageSimple'
+import { StaticWelcomePage } from '@/components/static/StaticWelcomePage'
 
 export default function Home() {
-  return <AdvancedWelcomePageSimple />
+  return <StaticWelcomePage />
 }
