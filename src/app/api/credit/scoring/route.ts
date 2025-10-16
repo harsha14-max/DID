@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 })
     }
 
+    const supabase = createServerSupabaseClient()
     // Get user's credentials
     const { data: credentials, error: credentialsError } = await supabase
       .from('verifiable_credentials')
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate credit score
     const scoreCalculation = creditScoringAlgorithm.calculateScore(credentials || [])
-    const scoreBreakdown = creditScoringAlgorithm.getScoreBreakdown(credentials || [])
+    const scoreBreakdown = creditScoringAlgorithm.calculateScoreBreakdown(credentials || [])
 
     // Get score history
     const { data: history, error: historyError } = await supabase
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     // Calculate credit score
     const scoreCalculation = creditScoringAlgorithm.calculateScore(credentials || [])
-    const scoreBreakdown = creditScoringAlgorithm.getScoreBreakdown(credentials || [])
+    const scoreBreakdown = creditScoringAlgorithm.calculateScoreBreakdown(credentials || [])
 
     // Save score to history
     const supabase = createServerSupabaseClient()

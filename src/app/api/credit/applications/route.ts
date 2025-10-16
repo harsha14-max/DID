@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     const lender_did = searchParams.get('lender_did')
     const status = searchParams.get('status')
     
+    const supabase = createServerSupabaseClient()
     let query = supabase.from('credit_applications').select('*')
     
     if (user_id) {

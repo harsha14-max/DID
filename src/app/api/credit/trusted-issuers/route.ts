@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
     const is_approved = searchParams.get('is_approved')
     const issuer_type = searchParams.get('issuer_type')
     
+    const supabase = createServerSupabaseClient()
     let query = supabase.from('trusted_issuers').select('*')
     
     if (is_approved !== null) {
