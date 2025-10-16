@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "url": "https://mcp.supabase.com/mcp?project_ref=brrxycurclfueamhiico",
+      "apiKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJycnh5Y3VyY2xmdWVhbWhpaWNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzNTM4MzUsImV4cCI6MjA3NDkyOTgzNX0.z1HgDrMgAajdwWSQtbov6MEB6fbwOtEAJt6OFom_r_I",
+      "projectUrl": "https://brrxycurclfueamhiico.supabase.co",
+      "description": "Connect Supabase for database, authentication, and storage control"
+    }
+  }
+}

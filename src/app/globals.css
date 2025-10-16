@@ -1,0 +1,1364 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Performance optimizations for smooth animations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+/* Trackpad scrolling support - Enhanced for admin dashboard */
+.scrollable {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  scroll-behavior: auto; /* Let Lenis handle smooth scrolling */
+  /* Enhanced trackpad support */
+  overscroll-behavior: contain;
+  scroll-snap-type: none;
+  /* Better momentum scrolling */
+  -webkit-overflow-scrolling: touch;
+  /* Ensure trackpad gestures work */
+  touch-action: pan-y;
+}
+
+/* Enhanced trackpad and touch support */
+html, body {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  /* Better trackpad gesture support */
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  /* Smooth scrolling for trackpad */
+  scroll-behavior: smooth;
+}
+
+/* Ensure all scrollable elements support trackpad gestures */
+* {
+  /* Enable momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  /* Better trackpad support */
+  overscroll-behavior: contain;
+}
+
+/* Trackpad-specific optimizations */
+@media (pointer: fine) {
+  html, body {
+    /* Enhanced trackpad scrolling */
+    scroll-behavior: smooth;
+    /* Better momentum scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent scroll chaining */
+    overscroll-behavior: contain;
+  }
+  
+  /* Smooth scrolling for trackpad users */
+  .scrollable {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Ultra-fast theme transitions with GPU acceleration */
+* {
+  transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease, transform 0.1s ease !important;
+}
+
+/* Quick hover responses with hardware acceleration */
+*:hover {
+  transition: all 0.1s ease !important;
+  transform: translateZ(0);
+}
+
+/* Light mode specific optimizations */
+.light * {
+  transition: background-color 0.05s ease, color 0.05s ease, border-color 0.05s ease !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.light *:hover {
+  transition: all 0.005s ease !important;
+}
+
+/* Disable unnecessary animations on theme switch */
+.theme-transitioning * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Performance optimizations for better FPS */
+* {
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000px;
+}
+
+/* Lag-free hover interactions */
+*:hover {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity, background-color, color;
+}
+
+/* Light mode hover optimizations */
+.light *:hover {
+  transition: all 0.02s ease !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity, background-color, color;
+}
+
+/* Ultra-fast button interactions */
+button, .btn, [role="button"] {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity, background-color;
+  transition: all 0.005s ease !important;
+}
+
+button:hover, .btn:hover, [role="button"]:hover {
+  transform: translateZ(0) scale(1.01);
+  transition: all 0.005s ease !important;
+}
+
+button:active, .btn:active, [role="button"]:active {
+  transform: translateZ(0) scale(0.99);
+  transition: all 0.005s ease !important;
+}
+
+/* Magnetic button override - disable global transitions */
+.magnetic-button {
+  transition: none !important;
+  transform: translateZ(0) !important;
+  will-change: transform, opacity !important;
+}
+
+.magnetic-button:hover {
+  transition: none !important;
+}
+
+/* Reduce motion for better performance */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Optimize canvas rendering */
+canvas {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+/* Midnight theme specific performance optimizations */
+.midnight {
+  /* Enhanced GPU acceleration for midnight theme */
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000px;
+  contain: layout style paint;
+  content-visibility: auto;
+}
+
+/* Midnight theme ultra-fast transitions */
+.midnight * {
+  transition: background-color 0.05s ease, color 0.05s ease, border-color 0.05s ease !important;
+}
+
+.midnight *:hover {
+  transition: all 0.05s ease !important;
+}
+
+/* Midnight theme specific contrast improvements */
+.midnight .text-gray-600 {
+  color: hsl(var(--text-secondary)) !important;
+}
+
+.midnight .text-gray-700 {
+  color: hsl(var(--text-primary)) !important;
+}
+
+.midnight .bg-gray-800 {
+  background-color: hsl(var(--secondary)) !important;
+}
+
+.midnight .bg-gray-900 {
+  background-color: hsl(var(--background)) !important;
+}
+
+.midnight .border-gray-700 {
+  border-color: hsl(var(--border)) !important;
+}
+
+.midnight .border-gray-600 {
+  border-color: hsl(var(--border-visible)) !important;
+}
+
+/* GPU acceleration for animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000px;
+  contain: layout style paint;
+  content-visibility: auto;
+}
+
+/* Ultra-fast hover performance */
+.hover-optimized {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity, background-color, color;
+  transition: all 0.02s ease !important;
+}
+
+.hover-optimized:hover {
+  transform: translateZ(0) scale(1.02);
+  transition: all 0.02s ease !important;
+}
+
+/* Light mode specific hover optimizations */
+.light .hover-optimized {
+  transition: all 0.01s ease !important;
+}
+
+.light .hover-optimized:hover {
+  transition: all 0.01s ease !important;
+}
+
+/* Optimize animations for 120fps */
+@supports (display: flex) {
+  .smooth-animation {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+/* High-performance hover states */
+.high-performance-hover {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity, background-color, color, box-shadow;
+  transition: all 0.02s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.high-performance-hover:hover {
+  transform: translateZ(0) scale(1.02);
+  transition: all 0.02s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Light mode ultra-fast interactions */
+.light .high-performance-hover {
+  transition: all 0.01s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.light .high-performance-hover:hover {
+  transition: all 0.01s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* High performance rendering */
+.high-performance {
+  contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Optimize canvas rendering */
+canvas {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Performance hints for browsers */
+.performance-hint {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 200px;
+}
+
+/* Theme-specific visibility improvements */
+.light .text-white {
+  color: hsl(var(--text-primary)) !important;
+}
+
+.light .text-gray-300 {
+  color: hsl(var(--text-secondary)) !important;
+}
+
+.light .bg-black {
+  background-color: hsl(var(--bg-overlay)) !important;
+}
+
+.light .border-white\/10 {
+  border-color: hsl(var(--border-visible)) !important;
+}
+
+.midnight .text-white {
+  color: hsl(var(--text-primary)) !important;
+}
+
+.midnight .text-gray-300 {
+  color: hsl(var(--text-secondary)) !important;
+}
+
+.midnight .text-gray-400 {
+  color: hsl(var(--text-secondary)) !important;
+}
+
+.midnight .text-gray-500 {
+  color: hsl(var(--text-secondary)) !important;
+}
+
+.midnight .bg-black {
+  background-color: hsl(var(--bg-overlay)) !important;
+}
+
+.midnight .bg-white\/5 {
+  background-color: hsl(var(--secondary)) !important;
+}
+
+.midnight .bg-white\/10 {
+  background-color: hsl(var(--muted)) !important;
+}
+
+.midnight .border-white\/10 {
+  border-color: hsl(var(--border-visible)) !important;
+}
+
+.midnight .border-white\/20 {
+  border-color: hsl(var(--border-visible)) !important;
+}
+
+.midnight .border-white\/30 {
+  border-color: hsl(var(--primary)) !important;
+}
+
+/* Enhanced midnight theme contrast */
+.midnight .backdrop-blur-md {
+  backdrop-filter: blur(12px);
+  background-color: hsl(var(--card) / 0.8) !important;
+}
+
+.midnight .hover\:border-white\/30:hover {
+  border-color: hsl(var(--primary)) !important;
+}
+
+.midnight .hover\:bg-white\/20:hover {
+  background-color: hsl(var(--muted)) !important;
+}
+
+/* Ensure text visibility in all themes */
+.light .text-foreground {
+  color: hsl(var(--text-primary)) !important;
+}
+
+.midnight .text-foreground {
+  color: hsl(var(--text-primary)) !important;
+}
+
+/* Theme Variables */
+:root {
+  /* Light Theme */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
+  
+  /* Light theme specific overrides for visibility */
+  --text-primary: 222.2 84% 4.9%;
+  --text-secondary: 215.4 16.3% 46.9%;
+  --bg-overlay: 0 0% 100%;
+  --border-visible: 214.3 31.8% 91.4%;
+}
+
+.dark {
+  /* Dark Theme */
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 84% 4.9%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 94.1%;
+}
+
+.midnight {
+  /* Midnight Theme - Enhanced for better contrast */
+  --background: 222.2 84% 1%;
+  --foreground: 210 50% 98%;
+  --card: 222.2 84% 3%;
+  --card-foreground: 210 50% 98%;
+  --popover: 222.2 84% 3%;
+  --popover-foreground: 210 50% 98%;
+  --primary: 262.1 83.3% 65%;
+  --primary-foreground: 210 50% 98%;
+  --secondary: 217.2 32.6% 12%;
+  --secondary-foreground: 210 50% 98%;
+  --muted: 217.2 32.6% 12%;
+  --muted-foreground: 215 25% 80%;
+  --accent: 217.2 32.6% 12%;
+  --accent-foreground: 210 50% 98%;
+  --destructive: 0 70% 50%;
+  --destructive-foreground: 210 50% 98%;
+  --border: 217.2 32.6% 20%;
+  --input: 217.2 32.6% 12%;
+  --ring: 262.1 83.3% 65%;
+  
+  /* Midnight theme specific overrides for visibility */
+  --text-primary: 210 50% 98%;
+  --text-secondary: 215 25% 85%;
+  --bg-overlay: 222.2 84% 3%;
+  --border-visible: 217.2 32.6% 25%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-foreground;
+}
+
+/* Loading animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Advanced BSM Platform Animations */
+
+/* Core Animation Keyframes */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes rotate-in {
+  from { opacity: 0; transform: rotate(-180deg) scale(0.5); }
+  to { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+/* Quantum Effects */
+@keyframes quantum-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes quantum-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(120deg); }
+  66% { transform: translateY(5px) rotate(240deg); }
+}
+
+@keyframes quantum-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
+}
+
+/* Neural Network Animations */
+@keyframes neural-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.5); opacity: 1; }
+}
+
+@keyframes neural-connect {
+  0% { stroke-dasharray: 0 100; }
+  100% { stroke-dasharray: 100 0; }
+}
+
+/* Holographic Effects */
+@keyframes holographic-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes holographic-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+  75% { opacity: 0.9; }
+}
+
+/* Liquid Effects */
+@keyframes liquid-flow {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+@keyframes liquid-bubble {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  50% { transform: scale(1) rotate(180deg); opacity: 1; }
+  100% { transform: scale(0) rotate(360deg); opacity: 0; }
+}
+
+/* Magnetic Effects */
+@keyframes magnetic-attract {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(var(--mouse-x, 0), var(--mouse-y, 0)); }
+}
+
+@keyframes magnetic-repel {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(calc(-1 * var(--mouse-x, 0)), calc(-1 * var(--mouse-y, 0))); }
+}
+
+/* Particle Effects */
+@keyframes particle-float {
+  0% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes particle-explode {
+  0% { transform: scale(0) rotate(0deg); opacity: 1; }
+  100% { transform: scale(3) rotate(360deg); opacity: 0; }
+}
+
+/* Circuit Board Effects */
+@keyframes circuit-activate {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes circuit-pulse {
+  0%, 100% { stroke-width: 1; opacity: 0.5; }
+  50% { stroke-width: 3; opacity: 1; }
+}
+
+/* Energy Effects */
+@keyframes energy-flow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes energy-orb {
+  0% { transform: scale(0) rotate(0deg); }
+  50% { transform: scale(1) rotate(180deg); }
+  100% { transform: scale(0) rotate(360deg); }
+}
+
+/* Glassmorphism Effects */
+@keyframes glass-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes glass-ripple {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+/* Enhanced Smooth Theme Transitions - Optimized for Performance */
+* {
+  transition: background-color 0.01s ease, color 0.01s ease, border-color 0.01s ease, box-shadow 0.01s ease, transform 0.01s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Light Theme - Optimized Live Light Elements */
+.light {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 25%, #f3e8ff 50%, #fef3c7 75%, #f0f9ff 100%);
+  background-size: 400% 400%;
+  animation: light-gradient-shift 10s ease infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: background-position;
+}
+
+@keyframes light-gradient-shift {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 100% 50%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Light Theme - Optimized Glowing Elements */
+.light .animate-quantum-glow {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(139, 92, 246, 0.2);
+  animation: light-glow 1.5s ease-in-out infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: box-shadow;
+}
+
+@keyframes light-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(139, 92, 246, 0.2);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 60px rgba(139, 92, 246, 0.4);
+  }
+}
+
+/* Light Theme - Optimized Shimmer Effects */
+.light .animate-holographic-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: light-shimmer 3s ease-in-out infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: background-position;
+}
+
+@keyframes light-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Enhanced Animation Smoothness - Optimized for Performance */
+.animate-fade-in { 
+  animation: fade-in 0.3s ease-out; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: opacity;
+}
+
+.animate-fade-in-up { 
+  animation: fade-in-up 0.3s ease-out; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.animate-slide-in-left { 
+  animation: slide-in-left 0.3s ease-out; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.animate-slide-in-right { 
+  animation: slide-in-right 0.3s ease-out; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.animate-scale-in { 
+  animation: scale-in 0.3s ease-out; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.animate-rotate-in { 
+  animation: rotate-in 0.4s ease-out; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.animate-quantum-pulse { 
+  animation: quantum-pulse 2s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+.animate-quantum-float { 
+  animation: quantum-float 3s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+.animate-quantum-glow { 
+  animation: quantum-glow 2s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: box-shadow;
+}
+
+.animate-neural-pulse { 
+  animation: neural-pulse 1.5s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+.animate-neural-connect { 
+  animation: neural-connect 2s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: stroke-dasharray;
+}
+
+.animate-holographic-shimmer { 
+  animation: holographic-shimmer 3s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background-size: 200% 100%;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: background-position;
+}
+
+.animate-holographic-flicker { 
+  animation: holographic-flicker 0.1s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: opacity;
+}
+
+.animate-liquid-flow { 
+  animation: liquid-flow 2s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+.animate-liquid-bubble { 
+  animation: liquid-bubble 1s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.animate-magnetic-attract { 
+  animation: magnetic-attract 0.3s ease-out; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+.animate-magnetic-repel { 
+  animation: magnetic-repel 0.3s ease-out; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.animate-particle-float { 
+  animation: particle-float 4s linear infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+.animate-particle-explode { 
+  animation: particle-explode 1s ease-out; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.animate-circuit-activate { 
+  animation: circuit-activate 2s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: stroke-dashoffset;
+}
+.animate-circuit-pulse { 
+  animation: circuit-pulse 1.5s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: stroke-width, opacity;
+}
+
+.animate-energy-flow { 
+  animation: energy-flow 2s linear infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+.animate-energy-orb { 
+  animation: energy-orb 2s ease-in-out infinite; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.animate-glass-shimmer { 
+  animation: glass-shimmer 3s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background-size: 200% 100%;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: background-position;
+}
+
+.animate-glass-ripple { 
+  animation: glass-ripple 0.5s ease-out; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Delay Classes */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-800 { animation-delay: 0.8s; }
+.delay-900 { animation-delay: 0.9s; }
+.delay-1000 { animation-delay: 1s; }
+
+/* Performance Optimizations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  contain: layout style paint;
+  content-visibility: auto;
+}
+
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .animate-quantum-glow {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  .animate-holographic-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent) !important;
+  }
+}
+
+/* Custom Properties for Dynamic Effects */
+:root {
+  --mouse-x: 0px;
+  --mouse-y: 0px;
+  --quantum-phase: 0deg;
+  --neural-frequency: 1;
+  --energy-level: 0.5;
+  --motion-reduce: 0;
+}
+
+/* Advanced Gradient Backgrounds */
+.gradient-quantum {
+  background: linear-gradient(135deg, #0f172a 0%, #581c87 25%, #1e1b4b 50%, #7c3aed 75%, #0f172a 100%);
+  background-size: 400% 400%;
+  animation: gradient-shift 10s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-holographic {
+  background: linear-gradient(45deg, 
+    rgba(0, 255, 255, 0.1) 0%, 
+    rgba(139, 92, 246, 0.1) 25%, 
+    rgba(16, 185, 129, 0.1) 50%, 
+    rgba(245, 158, 11, 0.1) 75%, 
+    rgba(0, 255, 255, 0.1) 100%);
+  background-size: 200% 200%;
+  animation: holographic-shift 8s ease infinite;
+}
+
+@keyframes holographic-shift {
+  0% { background-position: 0% 0%; }
+  25% { background-position: 100% 0%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+/* Glassmorphism Effects */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-morphism-dark {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Cyberpunk Effects */
+.cyberpunk-glow {
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.5),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+.cyberpunk-border {
+  border: 2px solid transparent;
+  background: linear-gradient(45deg, #00FFFF, #8B5CF6) border-box;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Biomorphic Effects */
+.biomorphic-shape {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+
+@keyframes biomorphic-morph {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  50% { border-radius: 50% 30% 40% 60% / 30% 50% 60% 40%; }
+  75% { border-radius: 40% 70% 60% 30% / 70% 40% 50% 30%; }
+}
+
+.gradient-bg-dark {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced Lenis Smooth Scrolling Styles - Optimized for Performance */
+.smooth-scroll-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+}
+
+/* Performance-optimized parallax elements */
+.parallax {
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  contain: layout style paint;
+}
+
+/* Optimized scroll animations */
+.scale-on-scroll {
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  contain: layout style paint;
+}
+
+.rotate-on-scroll {
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  contain: layout style paint;
+}
+
+.fade-on-scroll {
+  will-change: opacity;
+  contain: layout style paint;
+}
+
+/* Smooth scroll snap points */
+.scroll-snap-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.scroll-snap-container {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+/* Enhanced scroll indicators - Performance optimized */
+.scroll-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #00C3FF, #3E6FF6);
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 9999;
+  will-change: transform;
+  contain: layout style paint;
+}
+
+/* Smooth scroll momentum */
+.momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* GPU-accelerated smooth scrolling - Enhanced */
+.gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+  contain: layout style paint;
+}
+
+/* Performance-optimized easing classes */
+.ease-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.ease-buttery {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
+}
+
+.ease-elastic {
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  will-change: transform, opacity;
+}
+
+/* Lenis-specific performance optimizations */
+.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+  /* Enhanced trackpad support for prevented elements */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  touch-action: pan-y;
+}
+
+/* Admin dashboard specific trackpad fixes */
+.admin-dashboard {
+  /* Ensure trackpad gestures work in admin layout */
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-dashboard .scrollable {
+  /* Enhanced trackpad support for admin dashboard */
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  /* Better momentum scrolling */
+  scroll-snap-type: none;
+}
+
+/* Fix for admin dashboard sidebar scrolling */
+.admin-sidebar {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+/* Fix for admin dashboard main content scrolling */
+.admin-content {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scroll-behavior: auto;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .parallax,
+  .scale-on-scroll,
+  .rotate-on-scroll,
+  .fade-on-scroll {
+    will-change: auto;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  
+  .scroll-indicator {
+    transition: none;
+  }
+}
+
+/* High performance scroll containers */
+.high-performance-scroll {
+  contain: layout style paint;
+  will-change: scroll-position;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Optimized Scroll Animation Classes */
+.slide-up-on-scroll {
+  opacity: 0;
+  transform: translate3d(0, 50px, 0);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.slide-left-on-scroll {
+  opacity: 0;
+  transform: translate3d(-50px, 0, 0);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.slide-right-on-scroll {
+  opacity: 0;
+  transform: translate3d(50px, 0, 0);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.zoom-in-on-scroll {
+  opacity: 0;
+  transform: scale3d(0.8, 0.8, 1);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.flip-on-scroll {
+  opacity: 0;
+  transform: rotateY(90deg);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.fade-on-scroll {
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+/* Animation trigger classes */
+.slide-up-on-scroll.visible,
+.slide-left-on-scroll.visible,
+.slide-right-on-scroll.visible,
+.zoom-in-on-scroll.visible,
+.flip-on-scroll.visible,
+.fade-on-scroll.visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale3d(1, 1, 1) rotateY(0deg);
+}
+
+/* Scroll-based Animation Classes */
+.scale-on-scroll {
+  transform: scale(0.8);
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+.rotate-on-scroll {
+  transform: rotate(0deg);
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+.fade-on-scroll {
+  opacity: 0;
+  transition: opacity 0.1s ease-out;
+  will-change: opacity;
+}
+
+.parallax {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Enhanced scroll animations */
+.slide-up-on-scroll {
+  transform: translateY(50px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-left-on-scroll {
+  transform: translateX(-50px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-right-on-scroll {
+  transform: translateX(50px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.zoom-in-on-scroll {
+  transform: scale(0.5);
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.flip-on-scroll {
+  transform: rotateY(90deg);
+  opacity: 0;
+  transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Scroll-triggered animations */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Floating animation for scroll elements */
+.float-on-scroll {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Pulse animation for scroll elements */
+.pulse-on-scroll {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Glow animation for scroll elements */
+.glow-on-scroll {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 20px rgba(0, 195, 255, 0.3); }
+  to { box-shadow: 0 0 30px rgba(0, 195, 255, 0.6); }
+}
+
+/* Gradient shift animation for masked text */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

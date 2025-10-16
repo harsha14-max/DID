@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: bsm-platform
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        fromDatabase:
+          name: supabase
+          property: connectionString
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        fromDatabase:
+          name: supabase
+          property: connectionString
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        fromDatabase:
+          name: supabase
+          property: connectionString
+      - key: NEXT_PUBLIC_APP_URL
+        value: https://bsm-platform.onrender.com
+      - key: NEXTAUTH_URL
+        value: https://bsm-platform.onrender.com
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+
+databases:
+  - name: supabase
+    plan: free
