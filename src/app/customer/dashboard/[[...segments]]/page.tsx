@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, usePathname, useParams } from 'next/navigation'
 import { useAuth } from '@/components/providers/auth-provider'
+import { supabase } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -98,7 +99,6 @@ import {
   UserPlus,
   LogOut
 } from 'lucide-react'
-import { supabase } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 
 export default function CustomerDashboard({ params }: { params: { segments?: string[] } }) {
@@ -110,6 +110,26 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
   const segments = params.segments || []
   const activeTab = segments[0] || 'dashboard'
   const activeSubTab = segments[1] || 'overview'
+  
+  // Profile dropdown state
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (showProfileDropdown) {
+        setShowProfileDropdown(false)
+      }
+    }
+    
+    if (showProfileDropdown) {
+      document.addEventListener('click', handleClickOutside)
+    }
+    
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [showProfileDropdown])
 
   // Authentication check - must be before any conditional returns
   useEffect(() => {
@@ -154,6 +174,35 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
 
   const [loading, setLoading] = useState(false)
 
+  const fetchCustomerData = async () => {
+    try {
+      setLoading(true)
+      
+      if (!user?.id) {
+        console.error('No user ID available for fetching customer data')
+        return
+      }
+
+      // Fetch customer-specific data
+      const { data: customerData, error: customerError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      if (customerError) {
+        console.error('Error fetching customer data:', customerError)
+        return
+      }
+
+      console.log('Customer data loaded:', customerData)
+    } catch (error) {
+      console.error('Error in fetchCustomerData:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     fetchCustomerData()
   }, [])
@@ -190,86 +239,6 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
   if (!user || user.role !== 'customer') {
     return null
   }
-
-  const fetchCustomerData = async () => {
-    try {
-      setLoading(true)
-      
-      if (!user?.id) {
-        console.error('No user ID available for fetching customer data')
-        toast.error('User authentication error. Please log in again.')
-        return
-      }
-
-      // Fetch customer's tickets from Supabase
-      const { data: ticketsData, error: ticketsError } = await supabase
-        .from('tickets')
-        .select(`
-          id,
-          title,
-          description,
-          status,
-          priority,
-          category,
-          created_at,
-          updated_at,
-          resolved_at,
-          assigned_to,
-          assignee:assigned_to(full_name, email)
-        `)
-        .eq('created_by', user.id)
-        .order('created_at', { ascending: false })
-
-      if (ticketsError) {
-        console.error('Error fetching customer tickets:', ticketsError)
-        toast.error('Failed to load your tickets. Please try again.')
-        return
-      }
-
-      // Calculate ticket statistics
-      const openTickets = ticketsData?.filter(t => t.status === 'open').length || 0
-      const inProgressTickets = ticketsData?.filter(t => t.status === 'in_progress').length || 0
-      const resolvedTickets = ticketsData?.filter(t => t.status === 'resolved').length || 0
-      const totalTickets = ticketsData?.length || 0
-
-      // Transform tickets data
-      const recentTickets = ticketsData?.slice(0, 5).map(ticket => ({
-        id: ticket.id,
-        title: ticket.title,
-        status: ticket.status,
-        priority: ticket.priority,
-        created_at: ticket.created_at,
-        updated_at: ticket.updated_at,
-        description: ticket.description,
-        category: ticket.category,
-         assigned_to: (ticket.assignee as any)?.full_name || 'Unassigned'
-      })) || []
-
-      // Update customer data with real data
-      setCustomerData(prev => ({
-        ...prev,
-        openTickets,
-        inProgressTickets,
-        resolvedTickets,
-        totalTickets,
-        recentTickets
-      }))
-
-      console.log('Customer data loaded from Supabase:', {
-        totalTickets,
-        openTickets,
-        inProgressTickets,
-        resolvedTickets
-      })
-
-    } catch (error) {
-      console.error('Error fetching customer data:', error)
-      toast.error('Failed to load dashboard data. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
 
   const handleTabClick = (tab: string) => {
     router.push(`/customer/dashboard/${tab}`)
@@ -358,7 +327,6 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
       { id: 'dashboard', label: 'Dashboard' },
       { id: 'credentials', label: 'My Credentials' },
       { id: 'vc-generation', label: 'VC Generation' },
-      { id: 'credit-score', label: 'Credit Score' },
       { id: 'loan-applications', label: 'Loan Applications' },
       { id: 'did-security', label: 'DID & Security' }
     ],
@@ -398,19 +366,19 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
     <div className="min-h-screen bg-gray-50 overflow-hidden flex flex-col">
       {/* Header */}
       <header className="bg-white border-b shadow-sm">
-        <div className="px-6 py-4">
+        <div className="px-2 py-2">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <div className="flex items-center space-x-4">
-              <CredXLogo size={40} className="shadow-lg" />
+            <div className="flex items-center space-x-2 flex-shrink-0">
+              <CredXLogo size={24} className="shadow-lg" />
               <div>
-                <h1 className="text-xl font-bold text-gray-900">credX Platform</h1>
-                <p className="text-sm text-gray-600">Customer Experience</p>
+                <h1 className="text-sm font-bold text-gray-900">credX</h1>
+                <p className="text-xs text-gray-600 hidden sm:block">Platform</p>
               </div>
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-8">
+            <nav className="flex items-center space-x-1 overflow-x-auto flex-1 mx-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon
                 return (
@@ -418,47 +386,56 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
                     key={tab.id}
                     variant={activeTab === tab.id ? 'default' : 'ghost'}
                     onClick={() => handleTabClick(tab.id)}
-                    className="flex items-center space-x-2"
+                    className="flex items-center space-x-1 whitespace-nowrap text-xs px-2 py-1"
                   >
-                    <Icon className="h-4 w-4" />
-                    <span>{tab.label}</span>
+                    <Icon className="h-3 w-3" />
+                    <span className="hidden sm:inline">{tab.label}</span>
                   </Button>
                 )
               })}
             </nav>
 
             {/* Right side icons */}
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Search className="h-4 w-4" />
+            <div className="flex items-center space-x-1 flex-shrink-0">
+              <Button variant="ghost" size="sm" className="relative p-1">
+                <Bell className="h-3 w-3" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
               </Button>
-              <Button variant="ghost" size="sm" onClick={fetchCustomerData}>
-                <RefreshCw className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Download className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" className="relative">
-                <Bell className="h-4 w-4" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4 text-white" />
+              <div className="flex items-center space-x-1">
+                <span className="text-xs font-medium hidden lg:block">{user?.full_name || 'Test Customer'}</span>
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setShowProfileDropdown(!showProfileDropdown)
+                    }}
+                    className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"
+                  >
+                    <User className="h-3 w-3 text-white" />
+                  </button>
+                  
+                  {/* Profile Dropdown Menu */}
+                  {showProfileDropdown && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl border border-gray-200 z-[99999]">
+                      <div className="py-1">
+                        <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                          {user?.full_name || 'Test Customer'}
+                        </div>
+                        <div
+                          onClick={() => {
+                            console.log('Logout clicked!')
+                            setShowProfileDropdown(false)
+                            handleSignOut()
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center cursor-pointer"
+                        >
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Logout
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <span className="text-sm font-medium">{user?.full_name || 'Test Customer'}</span>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleSignOut}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                >
-                  <LogOut className="h-4 w-4 mr-1" />
-                  Logout
-                </Button>
               </div>
             </div>
           </div>
@@ -468,14 +445,15 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
       {/* Sub Navigation */}
       {activeTab !== 'dashboard' && subTabs[activeTab as keyof typeof subTabs] && (
         <div className="bg-white border-b">
-          <div className="px-6 py-3">
-            <nav className="flex items-center space-x-6">
+          <div className="px-2 py-2">
+            <nav className="flex items-center space-x-1 overflow-x-auto">
               {subTabs[activeTab as keyof typeof subTabs].map((subTab) => (
                 <Button
                   key={subTab.id}
                   variant={activeSubTab === subTab.id ? 'default' : 'ghost'}
                   onClick={() => handleSubTabClick(subTab.id)}
                   size="sm"
+                  className="text-xs px-2 py-1 whitespace-nowrap"
                 >
                   {subTab.label}
                 </Button>
@@ -486,7 +464,7 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
       )}
 
       {/* Content Area */}
-      <div className="p-6 overflow-y-auto scrollable flex-1" data-lenis-prevent>
+      <div className="p-2 overflow-y-auto scrollable flex-1" data-lenis-prevent>
         {activeTab === 'dashboard' && <DashboardContent data={customerData} />}
         {activeTab === 'tickets' && <TicketsContent subTab={activeSubTab} />}
         {activeTab === 'ratings' && <RatingsContent subTab={activeSubTab} />}
@@ -503,6 +481,15 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
 // Dashboard Content Component
 function DashboardContent({ data }: { data: any }) {
   const router = useRouter()
+  const [currentTime, setCurrentTime] = useState(new Date())
+  const [isAnimating, setIsAnimating] = useState(false)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -537,27 +524,50 @@ function DashboardContent({ data }: { data: any }) {
     }
   }
 
+  const handleCardClick = (path: string) => {
+    setIsAnimating(true)
+    setTimeout(() => {
+      router.push(path)
+      setIsAnimating(false)
+    }, 200)
+  }
+
   return (
     <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back, Test Customer!
-        </h2>
-        <p className="text-gray-600">
-          Manage your support tickets and access our services
-        </p>
+      {/* Enhanced Welcome Section with Live Clock */}
+      <div className="mb-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 opacity-50"></div>
+        <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                Welcome back, Test Customer! 👋
+              </h2>
+              <p className="text-gray-600 text-lg">
+                Manage your support tickets and access our services
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-mono font-bold text-gray-800">
+                {currentTime.toLocaleTimeString()}
+              </div>
+              <div className="text-sm text-gray-500">
+                {currentTime.toLocaleDateString()}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Action Cards */}
+      {/* Enhanced Action Cards with Animations */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card 
-          className="bg-blue-600 text-white hover:bg-blue-700 transition-colors cursor-pointer"
-          onClick={() => router.push('/customer/dashboard/tickets')}
+          className={`bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:shadow-xl ${isAnimating ? 'animate-pulse' : ''}`}
+          onClick={() => handleCardClick('/customer/dashboard/tickets')}
         >
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
                 <MessageSquare className="h-6 w-6" />
               </div>
               <div>
@@ -565,111 +575,131 @@ function DashboardContent({ data }: { data: any }) {
                 <p className="text-blue-100">Check your support requests</p>
               </div>
             </div>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-2xl font-bold">3</div>
+              <div className="text-xs bg-white/20 px-2 py-1 rounded-full">Open</div>
+            </div>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-blue-600 text-white hover:bg-blue-700 transition-colors cursor-pointer"
-          onClick={() => router.push('/customer/dashboard/ratings')}
+          className={`bg-gradient-to-br from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:shadow-xl ${isAnimating ? 'animate-pulse' : ''}`}
+          onClick={() => handleCardClick('/customer/dashboard/ratings')}
         >
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
                 <Star className="h-6 w-6" />
               </div>
               <div>
                 <h3 className="font-semibold text-lg">Rate Service</h3>
-                <p className="text-blue-100">Rate your experience</p>
+                <p className="text-green-100">Rate your experience</p>
               </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-2xl font-bold">4.8</div>
+              <div className="text-xs bg-white/20 px-2 py-1 rounded-full">⭐</div>
             </div>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-blue-600 text-white hover:bg-blue-700 transition-colors cursor-pointer"
-          onClick={() => router.push('/customer/dashboard/services')}
+          className={`bg-gradient-to-br from-purple-500 to-purple-600 text-white hover:from-purple-600 hover:to-purple-700 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:shadow-xl ${isAnimating ? 'animate-pulse' : ''}`}
+          onClick={() => handleCardClick('/customer/dashboard/services')}
         >
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
                 <Monitor className="h-6 w-6" />
               </div>
               <div>
                 <h3 className="font-semibold text-lg">System Status</h3>
-                <p className="text-blue-100">Check service status</p>
+                <p className="text-purple-100">Check service status</p>
               </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-2xl font-bold">99.9%</div>
+              <div className="text-xs bg-white/20 px-2 py-1 rounded-full">🟢</div>
             </div>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-blue-600 text-white hover:bg-blue-700 transition-colors cursor-pointer"
-          onClick={() => router.push('/customer/dashboard/help')}
+          className={`bg-gradient-to-br from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:shadow-xl ${isAnimating ? 'animate-pulse' : ''}`}
+          onClick={() => handleCardClick('/customer/dashboard/help')}
         >
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
                 <HelpCircle className="h-6 w-6" />
               </div>
               <div>
                 <h3 className="font-semibold text-lg">Get Help</h3>
-                <p className="text-blue-100">Find answers and support</p>
+                <p className="text-orange-100">Find answers and support</p>
               </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-2xl font-bold">24/7</div>
+              <div className="text-xs bg-white/20 px-2 py-1 rounded-full">💬</div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Ticket Status Summary */}
+      {/* Enhanced Ticket Status Summary */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-red-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">Open</p>
-                <p className="text-3xl font-bold text-gray-900">{data.openTickets}</p>
+                <p className="text-3xl font-bold text-red-600">{data.openTickets}</p>
+                <p className="text-xs text-gray-500 mt-1">Requires attention</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="h-6 w-6 text-blue-600" />
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center animate-pulse">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-yellow-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">In Progress</p>
-                <p className="text-3xl font-bold text-gray-900">{data.inProgressTickets}</p>
+                <p className="text-3xl font-bold text-yellow-600">{data.inProgressTickets}</p>
+                <p className="text-xs text-gray-500 mt-1">Being worked on</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Clock className="h-6 w-6 text-blue-600" />
+              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <Clock className="h-6 w-6 text-yellow-600 animate-spin" style={{ animationDuration: '3s' }} />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-green-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">Resolved</p>
-                <p className="text-3xl font-bold text-gray-900">{data.resolvedTickets}</p>
+                <p className="text-3xl font-bold text-green-600">{data.resolvedTickets}</p>
+                <p className="text-xs text-gray-500 mt-1">Successfully closed</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <CheckCircle className="h-6 w-6 text-blue-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-blue-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">Total</p>
-                <p className="text-3xl font-bold text-gray-900">{data.totalTickets}</p>
+                <p className="text-3xl font-bold text-blue-600">{data.totalTickets}</p>
+                <p className="text-xs text-gray-500 mt-1">All time tickets</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <BarChart3 className="h-6 w-6 text-blue-600" />
@@ -679,14 +709,17 @@ function DashboardContent({ data }: { data: any }) {
         </Card>
       </div>
 
-      {/* Recent Tickets and Service Health Grid */}
+      {/* Enhanced Recent Tickets and Service Health Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Recent Tickets */}
-        <Card>
-          <CardHeader>
+        {/* Enhanced Recent Tickets */}
+        <Card className="hover:shadow-lg transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50">
             <div className="flex items-center justify-between">
-              <CardTitle>Recent Tickets</CardTitle>
-              <Button variant="outline" size="sm" onClick={() => router.push('/customer/dashboard/tickets')}>
+              <CardTitle className="flex items-center space-x-2">
+                <MessageSquare className="h-5 w-5 text-blue-600" />
+                <span>Recent Tickets</span>
+              </CardTitle>
+              <Button variant="outline" size="sm" onClick={() => router.push('/customer/dashboard/tickets')} className="hover:bg-blue-600 hover:text-white transition-colors">
                 View All
               </Button>
             </div>
@@ -695,19 +728,19 @@ function DashboardContent({ data }: { data: any }) {
             <div className="space-y-4">
               {data.recentTickets.length > 0 ? (
                 data.recentTickets.map((ticket: any) => (
-                  <div key={ticket.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                  <div key={ticket.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300 cursor-pointer group">
                     <div className="flex-1">
-                      <h4 className="font-medium text-gray-900 mb-2">{ticket.title}</h4>
+                      <h4 className="font-medium text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{ticket.title}</h4>
                       {getStatusBadge(ticket.status, ticket.priority)}
                       <p className="text-sm text-gray-600">
                         Created {formatDate(ticket.created_at)} • Updated {formatDate(ticket.updated_at)}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm">
+                    <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button variant="ghost" size="sm" className="hover:bg-blue-100">
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" className="hover:bg-blue-100">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </div>
@@ -715,8 +748,11 @@ function DashboardContent({ data }: { data: any }) {
                 ))
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">No tickets found</p>
-                  <Button className="mt-4 bg-blue-600 hover:bg-blue-700" onClick={() => router.push('/customer/dashboard/tickets/create')}>
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <MessageSquare className="h-8 w-8 text-gray-400" />
+                  </div>
+                  <p className="text-gray-500 mb-4">No tickets found</p>
+                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-300 transform hover:scale-105" onClick={() => router.push('/customer/dashboard/tickets/create')}>
                     <Plus className="h-4 w-4 mr-2" />
                     Create New Ticket
                   </Button>
@@ -763,19 +799,22 @@ function DashboardContent({ data }: { data: any }) {
         </Card>
       </div>
 
-      {/* SLA Performance and Recent Activity Grid */}
+      {/* Enhanced SLA Performance and Recent Activity Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* SLA Performance */}
-        <Card>
-          <CardHeader>
-            <CardTitle>SLA Performance</CardTitle>
+        {/* Enhanced SLA Performance */}
+        <Card className="hover:shadow-lg transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
+            <CardTitle className="flex items-center space-x-2">
+              <TrendingUp className="h-5 w-5 text-purple-600" />
+              <span>SLA Performance</span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-300">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Compliance Rate</p>
-                  <p className="text-2xl font-bold text-gray-900">{data.slaPerformance.compliance}%</p>
+                  <p className="text-2xl font-bold text-purple-600">{data.slaPerformance.compliance}%</p>
                 </div>
                 <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
                   data.slaPerformance.compliance >= 95 ? 'bg-green-100' :
@@ -841,6 +880,54 @@ function DashboardContent({ data }: { data: any }) {
         </Card>
       </div>
 
+      {/* Quick Stats Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-100 text-sm font-medium">Response Time</p>
+                <p className="text-3xl font-bold">2.3h</p>
+                <p className="text-blue-200 text-xs">Average</p>
+              </div>
+              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <Clock className="h-6 w-6" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-green-100 text-sm font-medium">Satisfaction</p>
+                <p className="text-3xl font-bold">4.8/5</p>
+                <p className="text-green-200 text-xs">Rating</p>
+              </div>
+              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <Star className="h-6 w-6" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-purple-100 text-sm font-medium">Uptime</p>
+                <p className="text-3xl font-bold">99.9%</p>
+                <p className="text-purple-200 text-xs">This Month</p>
+              </div>
+              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <TrendingUp className="h-6 w-6" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Account Information */}
       <Card>
         <CardHeader>
@@ -878,6 +965,11 @@ function TicketsContent({ subTab }: { subTab: string }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedTicket, setSelectedTicket] = useState<any>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [ticketForm, setTicketForm] = useState({
+    title: '',
+    description: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const fetchCustomerTickets = async () => {
     if (!user?.id) return
@@ -911,6 +1003,48 @@ function TicketsContent({ subTab }: { subTab: string }) {
     } catch (error) {
       console.error('Error fetching customer tickets:', error)
       toast.error('Failed to load tickets. Please try again.')
+    }
+  }
+
+  const createTicket = async () => {
+    if (!user?.id || !ticketForm.title.trim() || !ticketForm.description.trim()) {
+      alert('Please fill in all required fields')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const { data, error } = await supabase
+        .from('tickets')
+        .insert({
+          title: ticketForm.title.trim(),
+          description: ticketForm.description.trim(),
+          created_by: user.id,
+          status: 'open',
+          priority: 'medium',
+          category: 'general'
+        })
+        .select()
+
+      if (error) {
+        console.error('Error creating ticket:', error)
+        alert('Failed to create ticket. Please try again.')
+        return
+      }
+
+      // Reset form and close modal
+      setTicketForm({ title: '', description: '' })
+      setShowCreateModal(false)
+      
+      // Refresh tickets list
+      await fetchCustomerTickets()
+      
+      alert('Ticket created successfully!')
+    } catch (error) {
+      console.error('Error creating ticket:', error)
+      alert('Failed to create ticket. Please try again.')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -1257,7 +1391,7 @@ function TicketsContent({ subTab }: { subTab: string }) {
 
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto scrollable" data-lenis-prevent>
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Create New Ticket</h2>
               <Button variant="ghost" onClick={() => setShowCreateModal(false)}>
@@ -1267,17 +1401,32 @@ function TicketsContent({ subTab }: { subTab: string }) {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="title">Title</Label>
-                <Input id="title" placeholder="Enter ticket title" />
+                <Input 
+                  id="title" 
+                  placeholder="Enter ticket title" 
+                  value={ticketForm.title}
+                  onChange={(e) => setTicketForm(prev => ({ ...prev, title: e.target.value }))}
+                />
               </div>
               <div>
                 <Label htmlFor="description">Description</Label>
-                <Textarea id="description" placeholder="Describe your issue..." rows={4} />
+                <Textarea 
+                  id="description" 
+                  placeholder="Describe your issue..." 
+                  rows={4}
+                  value={ticketForm.description}
+                  onChange={(e) => setTicketForm(prev => ({ ...prev, description: e.target.value }))}
+                />
               </div>
             </div>
             <div className="flex items-center space-x-4 pt-4">
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={createTicket}
+                disabled={isSubmitting}
+              >
                 <Save className="h-4 w-4 mr-2" />
-                Create Ticket
+                {isSubmitting ? 'Creating...' : 'Create Ticket'}
               </Button>
               <Button variant="outline" onClick={() => setShowCreateModal(false)}>
                 Cancel
@@ -1851,8 +2000,6 @@ function DigitalWalletContent({ subTab, userId }: { subTab: string; userId: stri
       return <DigitalWalletCredentials userId={userId} />
     case 'vc-generation':
       return <VCGeneration />
-    case 'credit-score':
-      return <DigitalWalletCreditScore userId={userId} />
     case 'loan-applications':
       return <DigitalWalletLoanApplications userId={userId} />
     case 'did-security':

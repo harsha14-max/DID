@@ -212,83 +212,83 @@ export default function DigitalWalletCredentials({ userId }: DigitalWalletCreden
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">My Credentials</h2>
-          <p className="text-gray-600">Manage your verifiable credentials</p>
+          <h2 className="text-xl font-bold text-gray-900">My Credentials</h2>
+          <p className="text-sm text-gray-600">Manage your verifiable credentials</p>
         </div>
-        <div className="flex space-x-2">
-          <Button variant="outline" onClick={loadCredentials} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+        <div className="flex space-x-1">
+          <Button variant="outline" onClick={loadCredentials} disabled={loading} size="sm">
+            <RefreshCw className={`h-3 w-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowIssuanceModal(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Issue Credential
+          <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowIssuanceModal(true)} size="sm">
+            <Plus className="h-3 w-3 mr-1" />
+            <span className="hidden sm:inline">Issue Credential</span>
           </Button>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">Total Credentials</p>
-                <p className="text-3xl font-bold text-gray-900">{credentials.length}</p>
+                <p className="text-xs font-medium text-gray-600 mb-1">Total</p>
+                <p className="text-xl font-bold text-gray-900">{credentials.length}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Shield className="h-6 w-6 text-blue-600" />
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Shield className="h-4 w-4 text-blue-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">Active</p>
-                <p className="text-3xl font-bold text-green-600">
+                <p className="text-xs font-medium text-gray-600 mb-1">Active</p>
+                <p className="text-xl font-bold text-green-600">
                   {credentials.filter(c => c.status === 'active').length}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="h-4 w-4 text-green-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">Expired</p>
-                <p className="text-3xl font-bold text-red-600">
+                <p className="text-xs font-medium text-gray-600 mb-1">Expired</p>
+                <p className="text-xl font-bold text-red-600">
                   {credentials.filter(c => c.status === 'expired').length}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <Clock className="h-6 w-6 text-red-600" />
+              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                <Clock className="h-4 w-4 text-red-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">Trust Score</p>
-                <p className="text-3xl font-bold text-purple-600">
+                <p className="text-xs font-medium text-gray-600 mb-1">Trust Score</p>
+                <p className="text-xl font-bold text-purple-600">
                   {credentials.length > 0 ? 
                     Math.round(credentials.reduce((sum, c) => sum + (c.trustLevel || 0), 0) / credentials.length) : 
                     0
                   }
                 </p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Award className="h-6 w-6 text-purple-600" />
+              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Award className="h-4 w-4 text-purple-600" />
               </div>
             </div>
           </CardContent>

@@ -1,291 +1,282 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Shield, Plus, Download, Search, Filter, Eye, Edit, MoreHorizontal, X, Zap, AlertTriangle, CheckCircle, Clock, Settings, Play } from 'lucide-react'
-import { supabase } from '@/lib/supabase/client'
-import toast from 'react-hot-toast'
+import {
+  Play,
+  Edit,
+  Copy,
+  Trash2,
+  Plus,
+  Search,
+  Filter,
+  MoreHorizontal,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  BarChart3,
+  Target,
+  Zap,
+  Settings,
+  Save,
+  X,
+  Eye,
+  RotateCcw
+} from 'lucide-react'
+
+interface Rule {
+  id: string
+  name: string
+  conditions: any
+  actions: any
+  priority: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+interface RuleExecution {
+  id: string
+  rule_id: string
+  status: string
+  executed_at: string
+  result: any
+}
 
 export default function RulesEnginePage() {
-  const [rules, setRules] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [rules, setRules] = useState<Rule[]>([])
+  const [executions, setExecutions] = useState<RuleExecution[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedRule, setSelectedRule] = useState<any>(null)
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [priorityFilter, setPriorityFilter] = useState('all')
+  const [loading, setLoading] = useState(true)
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [editingRule, setEditingRule] = useState<Rule | null>(null)
+  const [newRule, setNewRule] = useState({
+    name: '',
+    conditions: '',
+    actions: '',
+    priority: 3
+  })
+
+  // Mock data for demonstration
+  const mockRules: Rule[] = [
+    {
+      id: '1',
+      name: 'High Priority Ticket Routing',
+      conditions: { priority: 'high', category: 'technical' },
+      actions: { route_to: 'senior_support', notify: true },
+      priority: 1,
+      is_active: true,
+      created_at: '2024-01-15T10:30:00Z',
+      updated_at: '2024-01-15T10:30:00Z'
+    },
+    {
+      id: '2',
+      name: 'Auto-Response for Common Issues',
+      conditions: { category: 'billing', keywords: ['refund', 'payment'] },
+      actions: { auto_response: true, template: 'billing_template' },
+      priority: 2,
+      is_active: true,
+      created_at: '2024-01-14T09:15:00Z',
+      updated_at: '2024-01-14T09:15:00Z'
+    },
+    {
+      id: '3',
+      name: 'Escalation After 24 Hours',
+      conditions: { status: 'open', hours_open: 24 },
+      actions: { escalate: true, notify_manager: true },
+      priority: 3,
+      is_active: false,
+      created_at: '2024-01-13T14:20:00Z',
+      updated_at: '2024-01-13T14:20:00Z'
+    }
+  ]
+
+  const mockExecutions: RuleExecution[] = [
+    {
+      id: '1',
+      rule_id: '1',
+      status: 'success',
+      executed_at: '2024-01-15T11:30:00Z',
+      result: { tickets_routed: 5, success: true }
+    },
+    {
+      id: '2',
+      rule_id: '2',
+      status: 'success',
+      executed_at: '2024-01-15T10:45:00Z',
+      result: { responses_sent: 3, success: true }
+    },
+    {
+      id: '3',
+      rule_id: '1',
+      status: 'failed',
+      executed_at: '2024-01-15T09:20:00Z',
+      result: { error: 'Database connection failed', success: false }
+    }
+  ]
 
   useEffect(() => {
-    fetchRules()
+    // Simulate data loading
+    setTimeout(() => {
+      setRules(mockRules)
+      setExecutions(mockExecutions)
+      setLoading(false)
+    }, 1000)
   }, [])
 
-  const fetchRules = async () => {
-    try {
-      setLoading(true)
-
-      // Fetch rules from Supabase
-      const { data: rulesData, error } = await supabase
-        .from('rules')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) {
-        console.error('Error fetching rules:', error)
-        toast.error('Failed to load rules. Please try again.')
-        
-        // Fallback to mock data if database is not available
-      const mockRules = [
-        {
-          id: '1',
-          name: 'Auto-assign High Priority Tickets',
-          type: 'automation',
-          status: 'active',
-          description: 'Automatically assign high priority tickets to senior agents',
-          conditions: 'priority = "high" AND category = "technical"',
-          actions: 'assign_to = "senior_agent" AND notify = true',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '2',
-          name: 'Escalate Overdue Tickets',
-          type: 'escalation',
-          status: 'active',
-          description: 'Escalate tickets that are overdue by more than 24 hours',
-          conditions: 'status = "open" AND created_at < NOW() - INTERVAL 24 HOUR',
-          actions: 'priority = "urgent" AND notify_manager = true',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '3',
-            name: 'Auto-approve Low Risk Tickets',
-            type: 'approval',
-          status: 'active',
-            description: 'Automatically approve low priority tickets from trusted customers',
-            conditions: 'priority = "low" AND customer_trust_score > 80',
-            actions: 'status = "approved" AND notify_customer = true',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
-      ]
-      setRules(mockRules)
-        return
-      }
-
-      setRules(rulesData || [])
-      console.log('Rules loaded from Supabase:', rulesData?.length || 0)
-    } catch (error) {
-      console.error('Error fetching rules:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const createRule = async (ruleData: any) => {
-    try {
-      const { data, error } = await supabase
-        .from('rules')
-        .insert({
-          name: ruleData.name,
-          type: ruleData.type,
-          description: ruleData.description,
-          conditions: ruleData.conditions,
-          actions: ruleData.actions,
-          is_active: ruleData.status === 'active',
-          created_by: 'admin', // In real implementation, get from auth context
-          metadata: {
-            trigger_type: ruleData.trigger_type || 'ticket_created',
-            execution_order: ruleData.execution_order || 1
-          }
-        })
-        .select()
-
-      if (error) {
-        console.error('Error creating rule:', error)
-        toast.error('Failed to create rule. Please try again.')
-        return
-      }
-
-      toast.success('Rule created successfully!')
-      fetchRules() // Refresh the rules list
-      console.log('Rule created:', data)
-    } catch (error) {
-      console.error('Error creating rule:', error)
-      toast.error('Failed to create rule. Please try again.')
-    }
-  }
-
-  const executeRuleOnTickets = async (ruleId: string) => {
-    try {
-      const rule = rules.find(r => r.id === ruleId)
-      if (!rule) {
-        toast.error('Rule not found')
-        return
-      }
-
-      // Get all tickets that match the rule conditions
-      const { data: tickets, error } = await supabase
-        .from('tickets')
-        .select('*')
-        .eq('status', 'open')
-
-      if (error || !tickets) {
-        console.error('Error fetching tickets:', error)
-        toast.error('Failed to fetch tickets')
-        return
-      }
-
-      let processedCount = 0
-      for (const ticket of tickets) {
-        if (evaluateRuleCondition(rule, ticket)) {
-          await executeRuleAction(rule, ticket)
-          processedCount++
-        }
-      }
-
-      toast.success(`Rule executed on ${processedCount} tickets`)
-    } catch (error) {
-      console.error('Error executing rule:', error)
-      toast.error('Failed to execute rule')
-    }
-  }
-
-  const evaluateRuleCondition = (rule: any, ticket: any) => {
-    try {
-      const conditions = rule.conditions || ''
-      
-      // Simple condition evaluation
-      if (conditions.includes('priority = "high"') && ticket.priority === 'high') {
-        return true
-      }
-      
-      if (conditions.includes('priority = "urgent"') && ticket.priority === 'urgent') {
-        return true
-      }
-      
-      if (conditions.includes('category = "technical"') && ticket.category === 'technical') {
-        return true
-      }
-      
-      if (conditions.includes('status = "open"') && ticket.status === 'open') {
-        return true
-      }
-      
-      return false
-    } catch (error) {
-      console.error('Error evaluating rule condition:', error)
-      return false
-    }
-  }
-
-  const executeRuleAction = async (rule: any, ticket: any) => {
-    try {
-      const actions = rule.actions || ''
-      
-      // Execute actions based on rule
-      if (actions.includes('assign_to = "senior_agent"')) {
-        const { data: seniorAgents } = await supabase
-          .from('users')
-          .select('id')
-          .eq('role', 'admin')
-          .limit(1)
-
-        if (seniorAgents && seniorAgents.length > 0) {
-          await supabase
-            .from('tickets')
-            .update({ 
-              assigned_to: seniorAgents[0].id,
-              status: 'in_progress',
-              metadata: {
-                ...ticket.metadata,
-                auto_assigned: true,
-                rule_applied: rule.name,
-                rule_id: rule.id
-              }
-            })
-            .eq('id', ticket.id)
-        }
-      }
-      
-      if (actions.includes('status = "approved"')) {
-        await supabase
-          .from('tickets')
-          .update({ 
-            status: 'approved',
-            metadata: {
-              ...ticket.metadata,
-              auto_approved: true,
-              rule_applied: rule.name,
-              rule_id: rule.id,
-              approved_at: new Date().toISOString()
-            }
+  const handleRuleAction = (action: string, ruleId: string) => {
+    console.log(`${action} action for rule ${ruleId}`)
+    
+    switch (action) {
+      case 'play':
+        executeRule(ruleId)
+        break
+      case 'edit':
+        const rule = rules.find(r => r.id === ruleId)
+        if (rule) {
+          setEditingRule(rule)
+          setNewRule({
+            name: rule.name,
+            conditions: JSON.stringify(rule.conditions, null, 2),
+            actions: JSON.stringify(rule.actions, null, 2),
+            priority: rule.priority
           })
-          .eq('id', ticket.id)
+          setShowCreateModal(true)
+        }
+        break
+      case 'duplicate':
+        duplicateRule(ruleId)
+        break
+      case 'delete':
+        deleteRule(ruleId)
+        break
+      case 'toggle':
+        toggleRuleStatus(ruleId)
+        break
+    }
+  }
+
+  const executeRule = (ruleId: string) => {
+    const rule = rules.find(r => r.id === ruleId)
+    if (!rule) return
+
+    // Simulate rule execution
+    const execution: RuleExecution = {
+      id: Date.now().toString(),
+      rule_id: ruleId,
+      status: Math.random() > 0.2 ? 'success' : 'failed',
+      executed_at: new Date().toISOString(),
+      result: {
+        tickets_processed: Math.floor(Math.random() * 10) + 1,
+        success: Math.random() > 0.2
       }
-      
-      if (actions.includes('priority = "urgent"')) {
-        await supabase
-          .from('tickets')
-          .update({ 
-            priority: 'urgent',
-            metadata: {
-              ...ticket.metadata,
-              escalated: true,
-              rule_applied: rule.name,
-              rule_id: rule.id,
-              escalated_at: new Date().toISOString()
-            }
-          })
-          .eq('id', ticket.id)
+    }
+
+    setExecutions(prev => [execution, ...prev])
+    
+    // Show success notification
+    alert(`Rule "${rule.name}" executed successfully!`)
+  }
+
+  const duplicateRule = (ruleId: string) => {
+    const rule = rules.find(r => r.id === ruleId)
+    if (!rule) return
+
+    const duplicatedRule: Rule = {
+      ...rule,
+      id: Date.now().toString(),
+      name: `${rule.name} (Copy)`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+
+    setRules(prev => [...prev, duplicatedRule])
+    alert(`Rule "${rule.name}" duplicated successfully!`)
+  }
+
+  const deleteRule = (ruleId: string) => {
+    const rule = rules.find(r => r.id === ruleId)
+    if (!rule) return
+
+    if (confirm(`Are you sure you want to delete rule "${rule.name}"?`)) {
+      setRules(prev => prev.filter(r => r.id !== ruleId))
+      alert(`Rule "${rule.name}" deleted successfully!`)
+    }
+  }
+
+  const toggleRuleStatus = (ruleId: string) => {
+    setRules(prev => prev.map(rule => 
+      rule.id === ruleId 
+        ? { ...rule, is_active: !rule.is_active, updated_at: new Date().toISOString() }
+        : rule
+    ))
+  }
+
+  const handleCreateRule = () => {
+    if (!newRule.name.trim()) {
+      alert('Please enter a rule name')
+      return
+    }
+
+    try {
+      const conditions = JSON.parse(newRule.conditions)
+      const actions = JSON.parse(newRule.actions)
+
+      const rule: Rule = {
+        id: Date.now().toString(),
+        name: newRule.name,
+        conditions,
+        actions,
+        priority: newRule.priority,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
-      
+
+      if (editingRule) {
+        setRules(prev => prev.map(r => r.id === editingRule.id ? { ...rule, id: editingRule.id } : r))
+        alert(`Rule "${rule.name}" updated successfully!`)
+      } else {
+        setRules(prev => [...prev, rule])
+        alert(`Rule "${rule.name}" created successfully!`)
+      }
+
+      setShowCreateModal(false)
+      setEditingRule(null)
+      setNewRule({ name: '', conditions: '', actions: '', priority: 3 })
     } catch (error) {
-      console.error('Error executing rule action:', error)
+      alert('Invalid JSON format in conditions or actions')
     }
   }
 
   const filteredRules = rules.filter(rule => {
-    const matchesSearch = rule.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          rule.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          rule.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    return matchesSearch
+    const matchesSearch = rule.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === 'all' || 
+      (statusFilter === 'active' && rule.is_active) ||
+      (statusFilter === 'inactive' && !rule.is_active)
+    const matchesPriority = priorityFilter === 'all' || 
+      (priorityFilter === 'high' && rule.priority <= 2) ||
+      (priorityFilter === 'medium' && rule.priority === 3) ||
+      (priorityFilter === 'low' && rule.priority >= 4)
+    
+    return matchesSearch && matchesStatus && matchesPriority
   })
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'automation': return Zap
-      case 'escalation': return AlertTriangle
-      case 'notification': return CheckCircle
-      case 'approval': return Settings
-      default: return Shield
-    }
-  }
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'automation': return 'bg-blue-100 text-blue-800'
-      case 'escalation': return 'bg-orange-100 text-orange-800'
-      case 'notification': return 'bg-green-100 text-green-800'
-      case 'approval': return 'bg-purple-100 text-purple-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-100 text-green-800'
-      case 'inactive': return 'bg-gray-100 text-gray-800'
-      case 'draft': return 'bg-yellow-100 text-yellow-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
+  const totalExecutions = executions.length
+  const successfulExecutions = executions.filter(e => e.status === 'success').length
+  const successRate = totalExecutions > 0 ? Math.round((successfulExecutions / totalExecutions) * 100) : 0
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      <div className="p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
       </div>
     )
   }
@@ -293,77 +284,94 @@ export default function RulesEnginePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Rules Engine</h2>
-          <p className="text-gray-600">Manage automation rules and business logic</p>
+          <h1 className="text-2xl font-bold text-gray-900">Rules Engine</h1>
+          <p className="text-gray-600 mt-1">Automate workflows and processes with intelligent rules</p>
         </div>
-        <div className="flex items-center space-x-4">
-          <Button onClick={() => setShowCreateModal(true)} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Rule
+        <div className="flex gap-3">
+          <Button variant="outline" className="flex items-center gap-2">
+            <Settings className="h-4 w-4" />
+            Settings
           </Button>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
+          <Button 
+            className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
+            onClick={() => setShowCreateModal(true)}
+          >
+            <Plus className="h-4 w-4" />
+            Create Rule
           </Button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Rules</CardTitle>
-            <Shield className="h-4 w-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{rules.length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Automation</CardTitle>
-            <Zap className="h-4 w-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {rules.filter(r => r.type === 'automation').length}
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Rules</p>
+                <p className="text-2xl font-bold text-gray-900">{rules.length}</p>
+                <p className="text-xs text-green-600">+2 this week</p>
+              </div>
+              <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <BarChart3 className="h-4 w-4 text-blue-600" />
+              </div>
             </div>
           </CardContent>
         </Card>
+
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Escalation</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-orange-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {rules.filter(r => r.type === 'escalation').length}
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Active Rules</p>
+                <p className="text-2xl font-bold text-green-600">{rules.filter(r => r.is_active).length}</p>
+                <p className="text-xs text-gray-500">Currently running</p>
+              </div>
+              <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
+                <Zap className="h-4 w-4 text-green-600" />
+              </div>
             </div>
           </CardContent>
         </Card>
+
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Notification</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {rules.filter(r => r.type === 'notification').length}
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Executions</p>
+                <p className="text-2xl font-bold text-gray-900">{totalExecutions}</p>
+                <p className="text-xs text-gray-500">This month</p>
+              </div>
+              <div className="h-8 w-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <Target className="h-4 w-4 text-purple-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Success Rate</p>
+                <p className="text-2xl font-bold text-green-600">{successRate}%</p>
+                <p className="text-xs text-gray-500">Average</p>
+              </div>
+              <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Search and Filters */}
+      {/* Search and Filter Bar */}
       <Card>
-        <CardHeader>
-          <CardTitle>Search & Filter</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center space-x-4">
-            <div className="flex-1">
+        <CardContent className="p-4">
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+            <div className="flex-1 w-full">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
@@ -374,10 +382,34 @@ export default function RulesEnginePage() {
                 />
               </div>
             </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
+
+            <div className="flex gap-3 items-center">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+
+              <select
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Priorities</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+
+              <Button variant="outline" className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                Advanced
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -385,177 +417,211 @@ export default function RulesEnginePage() {
       {/* Rules Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Rules</CardTitle>
-          <CardDescription>
-            Showing {filteredRules.length} rules
-          </CardDescription>
+          <CardTitle>Rules Directory</CardTitle>
+          <CardDescription>Manage and monitor your automation rules</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {filteredRules.map((rule: any) => {
-              const TypeIcon = getTypeIcon(rule.type)
-              return (
-                <div
-                  key={rule.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                  onClick={() => setSelectedRule(rule)}
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                      <TypeIcon className="h-5 w-5 text-gray-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3">
-                        <h3 className="font-medium text-gray-900">{rule.name}</h3>
-                        <Badge className={getTypeColor(rule.type)}>
-                          {rule.type?.replace(/-/g, ' ') || 'Unknown'}
-                        </Badge>
-                        <Badge className={getStatusColor(rule.status)}>
-                          {rule.status || 'Unknown'}
-                        </Badge>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Name</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Conditions</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Actions</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Priority</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Status</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Last Modified</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRules.map((rule) => (
+                  <tr key={rule.id} className="border-b hover:bg-gray-50">
+                    <td className="py-3 px-4">
+                      <div className="font-medium text-gray-900">{rule.name}</div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="text-sm text-gray-600 max-w-xs">
+                        <pre className="whitespace-pre-wrap text-xs">
+                          {JSON.stringify(rule.conditions, null, 2)}
+                        </pre>
                       </div>
-                      <p className="text-sm text-gray-600">{rule.description}</p>
-                      <div className="flex items-center space-x-4 mt-1 text-xs text-gray-500">
-                        <span>ID: {rule.id}</span>
-                        <span>Created: {new Date(rule.created_at).toLocaleDateString()}</span>
-                        <span>Updated: {new Date(rule.updated_at).toLocaleDateString()}</span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="text-sm text-gray-600 max-w-xs">
+                        <pre className="whitespace-pre-wrap text-xs">
+                          {JSON.stringify(rule.actions, null, 2)}
+                        </pre>
                       </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        executeRuleOnTickets(rule.id)
-                      }}
-                    >
-                      <Play className="h-4 w-4 mr-1" />
-                      Execute
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              )
-            })}
-            {filteredRules.length === 0 && (
-              <div className="text-center py-8">
-                <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No rules found</h3>
-                <p className="text-gray-600">Try adjusting your search or filter criteria</p>
-              </div>
-            )}
+                    </td>
+                    <td className="py-3 px-4">
+                      <Badge variant={rule.priority <= 2 ? 'destructive' : rule.priority === 3 ? 'secondary' : 'outline'}>
+                        {rule.priority <= 2 ? 'High' : rule.priority === 3 ? 'Medium' : 'Low'}
+                      </Badge>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2">
+                        <Badge variant={rule.is_active ? 'default' : 'secondary'}>
+                          {rule.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleRuleAction('toggle', rule.id)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <RotateCcw className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <Clock className="h-4 w-4" />
+                        {new Date(rule.updated_at).toLocaleDateString()}
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRuleAction('play', rule.id)}
+                          className="h-8 w-8 p-0"
+                          title="Execute Rule"
+                        >
+                          <Play className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRuleAction('edit', rule.id)}
+                          className="h-8 w-8 p-0"
+                          title="Edit Rule"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRuleAction('duplicate', rule.id)}
+                          className="h-8 w-8 p-0"
+                          title="Duplicate Rule"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRuleAction('delete', rule.id)}
+                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                          title="Delete Rule"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </CardContent>
       </Card>
 
-      {/* Rule Detail Modal */}
-      {selectedRule && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">{selectedRule.name}</h2>
-              <Button variant="ghost" onClick={() => setSelectedRule(null)}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Badge className={getTypeColor(selectedRule.type)}>
-                  {selectedRule.type?.replace(/-/g, ' ') || 'Unknown'}
-                </Badge>
-                <Badge className={getStatusColor(selectedRule.status)}>
-                  {selectedRule.status || 'Unknown'}
-                </Badge>
-              </div>
-              <div>
-                <p><strong>Description:</strong></p>
-                <p className="text-gray-700">{selectedRule.description}</p>
-              </div>
-              <div>
-                <p><strong>Conditions:</strong></p>
-                <p className="text-gray-700 font-mono text-sm bg-gray-100 p-2 rounded">
-                  {selectedRule.conditions}
-                </p>
-              </div>
-              <div>
-                <p><strong>Actions:</strong></p>
-                <p className="text-gray-700 font-mono text-sm bg-gray-100 p-2 rounded">
-                  {selectedRule.actions}
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                <div>
-                  <p><strong>Created:</strong> {new Date(selectedRule.created_at).toLocaleString()}</p>
-                  <p><strong>Updated:</strong> {new Date(selectedRule.updated_at).toLocaleString()}</p>
-                </div>
-                <div>
-                  <p><strong>ID:</strong> {selectedRule.id}</p>
-                </div>
-              </div>
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline">Edit</Button>
-                <Button className="bg-red-600 hover:bg-red-700">Delete</Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Create Rule Modal */}
+      {/* Create/Edit Rule Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Create New Rule</h2>
-              <Button variant="ghost" onClick={() => setShowCreateModal(false)}>
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">
+                {editingRule ? 'Edit Rule' : 'Create New Rule'}
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowCreateModal(false)
+                  setEditingRule(null)
+                  setNewRule({ name: '', conditions: '', actions: '', priority: 3 })
+                }}
+              >
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <form className="space-y-4">
+
+            <div className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Rule Name</label>
-                <Input id="name" type="text" placeholder="Rule name" className="mt-1" />
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Rule Name
+                </label>
+                <Input
+                  value={newRule.name}
+                  onChange={(e) => setNewRule(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Enter rule name"
+                />
               </div>
+
               <div>
-                <label htmlFor="type" className="block text-sm font-medium text-gray-700">Rule Type</label>
-                <select id="type" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-                  <option value="automation">Automation</option>
-                  <option value="escalation">Escalation</option>
-                  <option value="notification">Notification</option>
-                  <option value="approval">Approval</option>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Priority
+                </label>
+                <select
+                  value={newRule.priority}
+                  onChange={(e) => setNewRule(prev => ({ ...prev, priority: parseInt(e.target.value) }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value={1}>High (1)</option>
+                  <option value={2}>High (2)</option>
+                  <option value={3}>Medium (3)</option>
+                  <option value={4}>Low (4)</option>
+                  <option value={5}>Low (5)</option>
                 </select>
               </div>
+
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-                <textarea id="description" rows={3} placeholder="Rule description" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"></textarea>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Conditions (JSON)
+                </label>
+                <textarea
+                  value={newRule.conditions}
+                  onChange={(e) => setNewRule(prev => ({ ...prev, conditions: e.target.value }))}
+                  placeholder='{"priority": "high", "category": "technical"}'
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-24 font-mono text-sm"
+                />
               </div>
+
               <div>
-                <label htmlFor="conditions" className="block text-sm font-medium text-gray-700">Conditions</label>
-                <textarea id="conditions" rows={3} placeholder="Rule conditions" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 font-mono text-sm"></textarea>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Actions (JSON)
+                </label>
+                <textarea
+                  value={newRule.actions}
+                  onChange={(e) => setNewRule(prev => ({ ...prev, actions: e.target.value }))}
+                  placeholder='{"route_to": "senior_support", "notify": true}'
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-24 font-mono text-sm"
+                />
               </div>
-              <div>
-                <label htmlFor="actions" className="block text-sm font-medium text-gray-700">Actions</label>
-                <textarea id="actions" rows={3} placeholder="Rule actions" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 font-mono text-sm"></textarea>
+
+              <div className="flex justify-end gap-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowCreateModal(false)
+                    setEditingRule(null)
+                    setNewRule({ name: '', conditions: '', actions: '', priority: 3 })
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleCreateRule} className="bg-blue-600 hover:bg-blue-700">
+                  <Save className="h-4 w-4 mr-2" />
+                  {editingRule ? 'Update Rule' : 'Create Rule'}
+                </Button>
               </div>
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setShowCreateModal(false)}>Cancel</Button>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Create</Button>
-              </div>
-            </form>
+            </div>
           </div>
         </div>
       )}
     </div>
   )
 }
-

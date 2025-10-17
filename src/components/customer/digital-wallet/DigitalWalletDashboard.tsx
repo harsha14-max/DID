@@ -54,16 +54,16 @@ interface DigitalWalletDashboardProps {
 export default function DigitalWalletDashboard({ userId }: DigitalWalletDashboardProps) {
   const [loading, setLoading] = useState(true)
   const [walletData, setWalletData] = useState({
-    creditScore: 680,
-    scoreChange: +15,
-    totalCredentials: 8,
-    loanEligibility: 85,
-    identityStrength: 92,
+    creditScore: 300,
+    scoreChange: 0,
+    totalCredentials: 0,
+    loanEligibility: 0,
+    identityStrength: 0,
     quickStats: {
-      totalApplications: 3,
-      approvedLoans: 1,
-      pendingVerifications: 2,
-      activeCredentials: 6
+      totalApplications: 0,
+      approvedLoans: 0,
+      pendingVerifications: 0,
+      activeCredentials: 0
     }
   })
 
@@ -75,31 +75,106 @@ export default function DigitalWalletDashboard({ userId }: DigitalWalletDashboar
     try {
       setLoading(true)
       
-      // Load credentials count from Supabase
-      const { data: credentials, error } = await supabase
+      // Load credentials from Supabase
+      const { data: credentials, error: credentialsError } = await supabase
         .from('verifiable_credentials')
         .select('*')
         .eq('user_id', userId)
         .eq('status', 'valid')
 
-      if (error) {
-        console.error('Error loading credentials:', error)
+      if (credentialsError) {
+        console.error('Error loading credentials:', credentialsError)
         toast.error('Failed to load wallet data')
         return
       }
 
+      // Load user's DID from Supabase
+      const { data: didData, error: didError } = await supabase
+        .from('user_dids')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      // Load loan applications from Supabase
+      const { data: loanApplications, error: loanError } = await supabase
+        .from('loan_applications')
+        .select('*')
+        .eq('user_id', userId)
+
+      if (loanError) {
+        console.error('Error loading loan applications:', loanError)
+      }
+
+      // Calculate credit score using the same logic as CreditScore component
       const totalCredentials = credentials?.length || 0
       const activeCredentials = credentials?.filter(c => !c.is_revoked).length || 0
+      
+      // Calculate base score from credentials (same logic as CreditScore component)
+      let baseScore = 300 // Starting score
+      let credentialScore = 0
+      let walletActivityScore = 0
+      
+      // Score based on number and types of credentials
+      credentials?.forEach(cred => {
+        switch (cred.credential_type.toLowerCase()) {
+          case 'utility verification':
+            credentialScore += 25
+            break
+          case 'landlord verification':
+            credentialScore += 30
+            break
+          case 'gig economy verification':
+            credentialScore += 20
+            break
+          case 'electric company verification':
+            credentialScore += 25
+            break
+          default:
+            credentialScore += 15
+        }
+      })
+      
+      // Score based on wallet activity (DID creation, credential management)
+      if (didData) {
+        walletActivityScore += 50 // DID exists
+        const daysSinceCreation = Math.floor((Date.now() - new Date(didData.created_at).getTime()) / (1000 * 60 * 60 * 24))
+        walletActivityScore += Math.min(daysSinceCreation * 2, 100) // Up to 100 points for account age
+      }
+      
+      // Calculate final score
+      const finalScore = Math.min(baseScore + credentialScore + walletActivityScore, 850)
+      
+      // Calculate score change (mock for now)
+      const scoreChange = Math.floor(Math.random() * 20) - 10 // Random change between -10 and +10
+      
+      // Calculate loan eligibility based on score
+      const loanEligibility = Math.min(Math.floor((finalScore / 850) * 100), 100)
+      
+      // Calculate identity strength based on credentials
+      const identityStrength = Math.min(Math.floor((totalCredentials / 10) * 100), 100)
 
-      // Update wallet data with real counts
-      setWalletData(prev => ({
-        ...prev,
+      // Process loan applications
+      const totalApplications = loanApplications?.length || 0
+      const approvedLoans = loanApplications?.filter(app => app.status === 'approved').length || 0
+      const pendingVerifications = loanApplications?.filter(app => app.status === 'pending').length || 0
+
+      // Update wallet data with calculated values
+      setWalletData({
+        creditScore: finalScore,
+        scoreChange: scoreChange,
         totalCredentials: totalCredentials,
+        loanEligibility: loanEligibility,
+        identityStrength: identityStrength,
         quickStats: {
-          ...prev.quickStats,
+          totalApplications: totalApplications,
+          approvedLoans: approvedLoans,
+          pendingVerifications: pendingVerifications,
           activeCredentials: activeCredentials
         }
-      }))
+      })
     } catch (error) {
       console.error('Error loading wallet data:', error)
       toast.error('Failed to load wallet data')
