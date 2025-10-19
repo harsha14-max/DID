@@ -250,12 +250,25 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
 
   const handleSignOut = async () => {
     try {
+      console.log('Customer logout initiated')
+      setShowProfileDropdown(false) // Close dropdown if open
+      
+      // Show loading state
+      const logoutButton = document.querySelector('[data-logout-button]')
+      if (logoutButton) {
+        logoutButton.textContent = 'Logging out...'
+        logoutButton.disabled = true
+      }
+      
       await signOut()
-      router.push('/auth/login')
+      console.log('Customer logout successful, redirecting to login')
+      
+      // Redirect to login page
+      window.location.href = '/auth/login?role=customer'
     } catch (error) {
       console.error('Error signing out:', error)
       // Still redirect to login page even if signOut fails
-      router.push('/auth/login')
+      window.location.href = '/auth/login?role=customer'
     }
   }
 
@@ -401,6 +414,19 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
                 <Bell className="h-3 w-3" />
                 <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
               </Button>
+              
+              {/* Visible Logout Button */}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleSignOut}
+                data-logout-button
+                className="flex items-center space-x-1 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300"
+              >
+                <LogOut className="h-3 w-3" />
+                <span className="hidden sm:inline text-xs">Logout</span>
+              </Button>
+              
               <div className="flex items-center space-x-1">
                 <span className="text-xs font-medium hidden lg:block">{user?.full_name || 'Test Customer'}</span>
                 <div className="relative">
@@ -423,7 +449,7 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
                         </div>
                         <div
                           onClick={() => {
-                            console.log('Logout clicked!')
+                            console.log('Logout clicked from dropdown!')
                             setShowProfileDropdown(false)
                             handleSignOut()
                           }}

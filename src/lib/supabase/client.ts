@@ -2,9 +2,9 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { createClient } from '@supabase/supabase-js'
 
 // Get environment variables with proper validation
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://brrxycurclfueamhiico.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJycnh5Y3VyY2xmdWVhbWhpaWNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzNTM4MzUsImV4cCI6MjA3NDkyOTgzNX0.z1HgDrMgAajdwWSQtbov6MEB6fbwOtEAJt6OFom_r_I'
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJycnh5Y3VyY2xmdWVhbWhpaWNvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTM1MzgzNSwiZXhwIjoyMDc0OTI5ODM1fQ.H1np_swN6MIertdy42tfqPw4-n_hPNXPO833CpkcAwQ'
 
 // Validate required environment variables
 if (!supabaseUrl || !supabaseAnonKey) {

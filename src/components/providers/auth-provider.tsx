@@ -48,25 +48,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.log('User found in session, fetching profile...')
           await fetchUserProfile(session.user)
         } else {
-          console.log('No user in session, but keeping existing user state for development')
-          // Don't clear user state immediately - let the session manager handle it
-          if (!user) {
-            setLoading(false)
-          }
+          console.log('No user in session, clearing user state')
+          setUser(null)
+          setLoading(false)
         }
       }
     )
 
-    // Check for existing session on mount with timeout
+    // Check for existing session on mount with improved timeout handling
     const checkSession = async () => {
       try {
-        const sessionPromise = supabase.auth.getSession()
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Session check timeout')), 3000)
-        )
+        console.log('Checking for existing session...')
+        const { data: { session: existingSession }, error } = await supabase.auth.getSession()
         
-        const result = await Promise.race([sessionPromise, timeoutPromise]) as any
-        const { data: { session: existingSession } } = result
+        if (error) {
+          console.error('Error getting session:', error)
+          setUser(null)
+          setLoading(false)
+          return
+        }
+        
         console.log('Existing session check:', existingSession?.user?.email)
         console.log('Session expires at:', existingSession?.expires_at ? new Date(existingSession.expires_at * 1000) : 'No expiration')
         
@@ -75,17 +76,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await fetchUserProfile(existingSession.user)
         } else {
           console.log('No existing session found')
+          setUser(null)
           setLoading(false)
         }
       } catch (error) {
         console.error('Error checking session:', error)
+        setUser(null)
         setLoading(false)
       }
     }
     
-    checkSession()
+    // Add a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.log('Auth timeout reached, setting loading to false')
+      setLoading(false)
+    }, 5000)
+    
+    checkSession().finally(() => {
+      clearTimeout(timeoutId)
+    })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(timeoutId)
+    }
   }, [])
 
   const fetchUserProfile = async (authUser: User) => {
@@ -140,9 +154,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         last_login: data.last_login,
       })
       console.log('User state updated successfully')
+      setLoading(false)
     } catch (error) {
       console.error('Error in fetchUserProfile:', error)
-      // Don't use fallback - let the error propagate so we can see what's wrong
+      setUser(null)
       setLoading(false)
       throw error
     }

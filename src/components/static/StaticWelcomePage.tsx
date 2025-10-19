@@ -8,8 +8,10 @@ import { CredXLogo } from '@/components/ui/credX-logo'
 export function StaticWelcomePage() {
   const [theme, setTheme] = useState('dark')
   const [isLoaded, setIsLoaded] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     setIsLoaded(true)
   }, [])
 
@@ -237,13 +239,9 @@ export function StaticWelcomePage() {
   }
 
   // Prevent SSR issues with client-only components
-  if (typeof window === 'undefined') {
+  if (!mounted) {
     return (
-      <div className={`min-h-screen transition-all duration-500 ${
-        theme === 'dark' 
-          ? 'bg-gradient-to-br from-slate-800 via-indigo-900 to-blue-800 text-white' 
-          : 'bg-gradient-to-br from-blue-50 via-white to-blue-100 text-gray-900'
-      }`}>
+      <div className="min-h-screen bg-gradient-to-br from-slate-800 via-indigo-900 to-blue-800 text-white">
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             credX

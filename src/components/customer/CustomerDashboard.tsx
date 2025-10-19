@@ -24,6 +24,7 @@ import {
   Eye
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/components/providers/auth-provider'
 
 interface CustomerTicket {
   id: string
@@ -45,6 +46,8 @@ interface CustomerDashboardProps {
 }
 
 export function CustomerDashboard({ className }: CustomerDashboardProps) {
+  const { signOut } = useAuth()
+  
   // Mock data - in real implementation, this would come from API
   const customerStats = {
     myTickets: 8,
@@ -243,7 +246,7 @@ export function CustomerDashboard({ className }: CustomerDashboardProps) {
             <Settings className="h-4 w-4 mr-2" />
             Settings
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={signOut}>
             <LogOut className="h-4 w-4 mr-2" />
             Sign Out
           </Button>
