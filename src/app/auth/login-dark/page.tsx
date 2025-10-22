@@ -85,19 +85,19 @@ function LoginForm() {
   }
 
   return (
-    <div className="h-screen flex relative overflow-hidden">
+    <div className="h-screen flex relative overflow-hidden bg-gray-900">
       {/* Home Button - Top Right Corner */}
       <Link 
         href="/"
-        className="absolute top-6 right-6 z-10 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 shadow-sm transition-all duration-200 hover:shadow-md"
+        className="absolute top-6 right-6 z-10 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 shadow-sm transition-all duration-200 hover:shadow-md"
       >
-        <span className="text-gray-700 font-medium text-sm">Home</span>
-            </Link>
+        <span className="text-gray-200 font-medium text-sm">Home</span>
+      </Link>
 
       {/* Left Panel - Login Form */}
-      <div className="flex-1 bg-white flex items-center justify-center p-4">
+      <div className="flex-1 bg-gray-900 flex items-center justify-center p-4">
         <div className="w-full max-w-sm">
-          {/* Welcome Title - Enhanced */}
+          {/* Welcome Title - Enhanced Dark Mode */}
           <motion.div
             className="mb-6 text-center"
             initial={{ opacity: 0, y: 20 }}
@@ -118,12 +118,12 @@ function LoginForm() {
               }}
             >
               <motion.span
-                className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent"
+                className="bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent"
                 animate={{
                   textShadow: [
-                    "0 0 0px rgba(59, 130, 246, 0)",
-                    "0 0 20px rgba(59, 130, 246, 0.3)",
-                    "0 0 0px rgba(59, 130, 246, 0)"
+                    "0 0 0px rgba(96, 165, 250, 0)",
+                    "0 0 20px rgba(96, 165, 250, 0.4)",
+                    "0 0 0px rgba(96, 165, 250, 0)"
                   ]
                 }}
                 transition={{
@@ -136,7 +136,7 @@ function LoginForm() {
                 Welcome to{' '}
               </motion.span>
               <motion.span
-                className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent relative"
+                className="bg-gradient-to-r from-indigo-400 via-purple-400 to-blue-400 bg-clip-text text-transparent relative"
                 animate={{
                   scale: [1, 1.1, 1],
                   rotateY: [0, 10, 0],
@@ -150,8 +150,8 @@ function LoginForm() {
               >
                 credX
                 {/* Animated underline */}
-      <motion.div
-                  className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+                <motion.div
+                  className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: "100%" }}
                   transition={{
@@ -165,21 +165,21 @@ function LoginForm() {
             </motion.h1>
 
             {/* Animated Dots */}
-          <motion.div 
+            <motion.div
               className="flex items-center justify-center space-x-2"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <motion.div
-                className="w-2 h-2 bg-blue-500 rounded-full"
+                className="w-2 h-2 bg-blue-400 rounded-full"
                 animate={{
                   scale: [1, 1.4, 1],
                   opacity: [0.4, 0.9, 0.4],
                   boxShadow: [
-                    "0 0 0px rgba(59, 130, 246, 0)",
-                    "0 0 10px rgba(59, 130, 246, 0.6)",
-                    "0 0 0px rgba(59, 130, 246, 0)"
+                    "0 0 0px rgba(96, 165, 250, 0)",
+                    "0 0 10px rgba(96, 165, 250, 0.6)",
+                    "0 0 0px rgba(96, 165, 250, 0)"
                   ]
                 }}
                 transition={{
@@ -189,14 +189,14 @@ function LoginForm() {
                 }}
               />
               <motion.div
-                className="w-1.5 h-1.5 bg-purple-500 rounded-full"
+                className="w-1.5 h-1.5 bg-purple-400 rounded-full"
                 animate={{
                   scale: [1, 1.4, 1],
                   opacity: [0.4, 0.9, 0.4],
                   boxShadow: [
-                    "0 0 0px rgba(147, 51, 234, 0)",
-                    "0 0 10px rgba(147, 51, 234, 0.6)",
-                    "0 0 0px rgba(147, 51, 234, 0)"
+                    "0 0 0px rgba(168, 85, 247, 0)",
+                    "0 0 10px rgba(168, 85, 247, 0.6)",
+                    "0 0 0px rgba(168, 85, 247, 0)"
                   ]
                 }}
                 transition={{
@@ -207,14 +207,14 @@ function LoginForm() {
                 }}
               />
               <motion.div
-                className="w-2 h-2 bg-indigo-500 rounded-full"
+                className="w-2 h-2 bg-indigo-400 rounded-full"
                 animate={{
                   scale: [1, 1.4, 1],
                   opacity: [0.4, 0.9, 0.4],
                   boxShadow: [
-                    "0 0 0px rgba(99, 102, 241, 0)",
-                    "0 0 10px rgba(99, 102, 241, 0.6)",
-                    "0 0 0px rgba(99, 102, 241, 0)"
+                    "0 0 0px rgba(129, 140, 248, 0)",
+                    "0 0 10px rgba(129, 140, 248, 0.6)",
+                    "0 0 0px rgba(129, 140, 248, 0)"
                   ]
                 }}
                 transition={{
@@ -224,17 +224,17 @@ function LoginForm() {
                   delay: 1.6
                 }}
               />
-          </motion.div>
-          
+            </motion.div>
+
             {/* Elegant Divider */}
             <motion.div
-              className="w-16 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mt-4 relative"
+              className="w-16 h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent mx-auto mt-4 relative"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
               {/* Moving highlight */}
-          <motion.div
+              <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-60"
                 animate={{
                   x: ["-100%", "100%"]
@@ -263,7 +263,7 @@ function LoginForm() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+              <label className="block text-gray-300 text-sm font-medium mb-2">
                 Email
               </label>
               <div className="relative">
@@ -273,7 +273,7 @@ function LoginForm() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-100 placeholder-gray-400"
                   placeholder="yatingzang0215@gmail.com"
                   required
                 />
@@ -286,7 +286,7 @@ function LoginForm() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+              <label className="block text-gray-300 text-sm font-medium mb-2">
                 Password
               </label>
               <div className="relative">
@@ -296,14 +296,14 @@ function LoginForm() {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full pl-10 pr-12 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-100 placeholder-gray-400"
                   placeholder="********"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -316,7 +316,7 @@ function LoginForm() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
-              <label className="block text-gray-700 text-sm font-medium mb-3">
+              <label className="block text-gray-300 text-sm font-medium mb-3">
                 Choose Your Portal
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -326,22 +326,22 @@ function LoginForm() {
                   onClick={() => setFormData(prev => ({ ...prev, role: 'customer' }))}
                   className={`p-4 rounded-lg border-2 transition-all duration-200 ${
                     formData.role === 'customer'
-                      ? 'border-blue-500 bg-blue-50 shadow-md'
-                      : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                      ? 'border-blue-500 bg-blue-900/20 shadow-md'
+                      : 'border-gray-600 bg-gray-800 hover:border-gray-500 hover:shadow-sm'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className="flex flex-col items-center space-y-2">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      formData.role === 'customer' ? 'bg-blue-500' : 'bg-gray-200'
+                      formData.role === 'customer' ? 'bg-blue-500' : 'bg-gray-600'
                     }`}>
                       <Users className={`w-4 h-4 ${
-                        formData.role === 'customer' ? 'text-white' : 'text-gray-500'
+                        formData.role === 'customer' ? 'text-white' : 'text-gray-300'
                       }`} />
                     </div>
                     <span className={`text-sm font-medium ${
-                      formData.role === 'customer' ? 'text-blue-700' : 'text-gray-700'
+                      formData.role === 'customer' ? 'text-blue-300' : 'text-gray-300'
                     }`}>
                       Customer
                     </span>
@@ -354,28 +354,28 @@ function LoginForm() {
                   onClick={() => setFormData(prev => ({ ...prev, role: 'admin' }))}
                   className={`p-4 rounded-lg border-2 transition-all duration-200 ${
                     formData.role === 'admin'
-                      ? 'border-blue-500 bg-blue-50 shadow-md'
-                      : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                      ? 'border-blue-500 bg-blue-900/20 shadow-md'
+                      : 'border-gray-600 bg-gray-800 hover:border-gray-500 hover:shadow-sm'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className="flex flex-col items-center space-y-2">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      formData.role === 'admin' ? 'bg-blue-500' : 'bg-gray-200'
+                      formData.role === 'admin' ? 'bg-blue-500' : 'bg-gray-600'
                     }`}>
                       <Settings className={`w-4 h-4 ${
-                        formData.role === 'admin' ? 'text-white' : 'text-gray-500'
+                        formData.role === 'admin' ? 'text-white' : 'text-gray-300'
                       }`} />
                     </div>
                     <span className={`text-sm font-medium ${
-                      formData.role === 'admin' ? 'text-blue-700' : 'text-gray-700'
+                      formData.role === 'admin' ? 'text-blue-300' : 'text-gray-300'
                     }`}>
                       Admin
                     </span>
                   </div>
                 </motion.button>
-            </div>
+              </div>
             </motion.div>
 
             {/* Error Message */}
@@ -383,7 +383,7 @@ function LoginForm() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm"
+                className="bg-red-900/20 border border-red-500 rounded-lg p-3 text-red-300 text-sm"
               >
                 {error}
               </motion.div>
@@ -418,30 +418,29 @@ function LoginForm() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.7 }}
           >
-            <span className="text-gray-600 text-sm">
-                Don't have an account?{' '}
-              </span>
-              <Link 
-                href="/auth/signup" 
-              className="text-blue-600 hover:text-blue-700 font-medium underline"
-              >
+            <span className="text-gray-400 text-sm">
+              Don't have an account?{' '}
+            </span>
+            <Link 
+              href="/auth/signup" 
+              className="text-blue-400 hover:text-blue-300 font-medium underline"
+            >
               Sign Up!
-              </Link>
+            </Link>
           </motion.div>
-
         </div>
       </div>
 
-      {/* Right Panel - Enhanced credX Showcase */}
-      <div className="flex-1 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+      {/* Right Panel - Dark Mode credX Showcase */}
+      <div className="flex-1 bg-gradient-to-br from-gray-800 via-gray-900 to-black relative overflow-hidden">
         {/* Rounded top-right corner */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-bl-full z-10"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gray-900 rounded-bl-full z-10"></div>
         
-        {/* Enhanced Background Effects */}
+        {/* Enhanced Background Effects - Dark Mode */}
         <div className="absolute inset-0 opacity-20">
           {/* Main Floating Bubbles */}
           <motion.div
-            className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full"
+            className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full"
             animate={{
               scale: [1, 1.3, 1],
               rotate: [0, 180, 360],
@@ -455,7 +454,7 @@ function LoginForm() {
             }}
           />
           <motion.div
-            className="absolute top-32 right-20 w-16 h-16 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full"
+            className="absolute top-32 right-20 w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full"
             animate={{
               scale: [1, 1.4, 1],
               rotate: [360, 180, 0],
@@ -470,7 +469,7 @@ function LoginForm() {
             }}
           />
           <motion.div
-            className="absolute bottom-20 left-16 w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full"
+            className="absolute bottom-20 left-16 w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full"
             animate={{
               scale: [1, 1.5, 1],
               rotate: [0, -180, -360],
@@ -485,7 +484,7 @@ function LoginForm() {
             }}
           />
           <motion.div
-            className="absolute bottom-32 right-10 w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full"
+            className="absolute bottom-32 right-10 w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full"
             animate={{
               scale: [1, 1.2, 1],
               rotate: [360, 0, -360],
@@ -500,7 +499,7 @@ function LoginForm() {
             }}
           />
           <motion.div
-            className="absolute top-40 left-1/2 w-8 h-8 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full"
+            className="absolute top-40 left-1/2 w-8 h-8 bg-gradient-to-br from-pink-500 to-pink-700 rounded-full"
             animate={{
               scale: [1, 1.6, 1],
               rotate: [0, 90, 180, 270, 360],
@@ -517,7 +516,7 @@ function LoginForm() {
           
           {/* Additional Floating Elements */}
           <motion.div
-            className="absolute top-20 right-1/3 w-6 h-6 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full"
+            className="absolute top-20 right-1/3 w-6 h-6 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-full"
             animate={{
               scale: [1, 1.3, 1],
               rotate: [0, 360, 720],
@@ -532,7 +531,7 @@ function LoginForm() {
             }}
           />
           <motion.div
-            className="absolute bottom-40 left-1/3 w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full"
+            className="absolute bottom-40 left-1/3 w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-700 rounded-full"
             animate={{
               scale: [1, 1.2, 1],
               rotate: [360, 0, -360],
@@ -547,7 +546,7 @@ function LoginForm() {
             }}
           />
           <motion.div
-            className="absolute top-60 right-1/4 w-4 h-4 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full"
+            className="absolute top-60 right-1/4 w-4 h-4 bg-gradient-to-br from-teal-500 to-teal-700 rounded-full"
             animate={{
               scale: [1, 1.8, 1],
               rotate: [0, -180, -360],
@@ -564,7 +563,7 @@ function LoginForm() {
           
           {/* Geometric Shapes */}
           <motion.div
-            className="absolute top-16 right-1/2 w-14 h-14 bg-gradient-to-br from-violet-400 to-violet-600 transform rotate-45"
+            className="absolute top-16 right-1/2 w-14 h-14 bg-gradient-to-br from-violet-500 to-violet-700 transform rotate-45"
             animate={{
               scale: [1, 1.1, 1],
               rotate: [45, 225, 405],
@@ -578,7 +577,7 @@ function LoginForm() {
             }}
           />
           <motion.div
-            className="absolute bottom-16 left-1/4 w-18 h-18 bg-gradient-to-br from-rose-400 to-rose-600 transform rotate-12"
+            className="absolute bottom-16 left-1/4 w-18 h-18 bg-gradient-to-br from-rose-500 to-rose-700 transform rotate-12"
             animate={{
               scale: [1, 1.2, 1],
               rotate: [12, 192, 372],
@@ -594,7 +593,7 @@ function LoginForm() {
           
           {/* Floating Particles */}
           <motion.div
-            className="absolute top-1/4 left-1/4 w-2 h-2 bg-blue-300 rounded-full"
+            className="absolute top-1/4 left-1/4 w-2 h-2 bg-blue-400 rounded-full"
             animate={{
               y: [0, -30, 0],
               opacity: [0.3, 0.8, 0.3],
@@ -608,7 +607,7 @@ function LoginForm() {
             }}
           />
           <motion.div
-            className="absolute top-3/4 right-1/4 w-1.5 h-1.5 bg-purple-300 rounded-full"
+            className="absolute top-3/4 right-1/4 w-1.5 h-1.5 bg-purple-400 rounded-full"
             animate={{
               y: [0, -25, 0],
               opacity: [0.2, 0.7, 0.2],
@@ -622,7 +621,7 @@ function LoginForm() {
             }}
           />
           <motion.div
-            className="absolute top-1/2 right-1/3 w-3 h-3 bg-indigo-300 rounded-full"
+            className="absolute top-1/2 right-1/3 w-3 h-3 bg-indigo-400 rounded-full"
             animate={{
               y: [0, -35, 0],
               opacity: [0.4, 0.9, 0.4],
@@ -646,10 +645,10 @@ function LoginForm() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="text-2xl font-semibold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent mb-1">
+            <h2 className="text-2xl font-semibold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent mb-1">
               Welcome to
             </h2>
-            <p className="text-slate-600 text-lg font-medium">Enterprise Credit Management</p>
+            <p className="text-gray-300 text-lg font-medium">Enterprise Credit Management</p>
           </motion.div>
           
           {/* Portal Screenshots */}
@@ -668,7 +667,7 @@ function LoginForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Customer Portal Screenshot */}
               <motion.div
-                className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200 relative"
+                className="bg-gray-800 rounded-xl shadow-2xl overflow-hidden border border-gray-700 relative"
                 animate={{
                   scale: [1, 1.02, 1],
                   rotateY: [0, 2, 0]
@@ -686,13 +685,13 @@ function LoginForm() {
                 }}
               >
                 {/* Browser Header */}
-                <div className="bg-gray-100 px-4 py-3 flex items-center space-x-2 border-b">
+                <div className="bg-gray-700 px-4 py-3 flex items-center space-x-2 border-b border-gray-600">
                   <div className="flex space-x-2">
                     <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <div className="flex-1 bg-white rounded px-3 py-1 text-xs text-gray-500 ml-4">
+                  <div className="flex-1 bg-gray-600 rounded px-3 py-1 text-xs text-gray-300 ml-4">
                     credx.com/customer/dashboard
                   </div>
                 </div>
@@ -706,15 +705,15 @@ function LoginForm() {
                         <Users className="w-4 h-4 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-800">Customer Dashboard</h3>
-                        <p className="text-sm text-gray-500">Welcome back, John Doe</p>
+                        <h3 className="text-lg font-semibold text-gray-100">Customer Dashboard</h3>
+                        <p className="text-sm text-gray-400">Welcome back, John Doe</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                         <span className="text-xs">🔔</span>
                       </div>
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                         <span className="text-xs">👤</span>
                       </div>
                     </div>
@@ -723,7 +722,7 @@ function LoginForm() {
                   {/* Dashboard Grid */}
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <motion.div
-                      className="bg-blue-50 rounded-lg p-3"
+                      className="bg-blue-900/30 rounded-lg p-3"
                       animate={{
                         scale: [1, 1.02, 1]
                       }}
@@ -734,11 +733,11 @@ function LoginForm() {
                         delay: 0.5
                       }}
                     >
-                      <div className="text-2xl font-bold text-blue-600">$12,450</div>
-                      <div className="text-sm text-gray-600">Credit Score</div>
+                      <div className="text-2xl font-bold text-blue-400">$12,450</div>
+                      <div className="text-sm text-gray-400">Credit Score</div>
                     </motion.div>
                     <motion.div
-                      className="bg-green-50 rounded-lg p-3"
+                      className="bg-green-900/30 rounded-lg p-3"
                       animate={{
                         scale: [1, 1.02, 1]
                       }}
@@ -749,16 +748,16 @@ function LoginForm() {
                         delay: 1
                       }}
                     >
-                      <div className="text-2xl font-bold text-green-600">3</div>
-                      <div className="text-sm text-gray-600">Active Loans</div>
+                      <div className="text-2xl font-bold text-green-400">3</div>
+                      <div className="text-sm text-gray-400">Active Loans</div>
                     </motion.div>
                   </div>
                   
                   {/* Recent Activity */}
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-700">Recent Activity</h4>
+                    <h4 className="text-sm font-semibold text-gray-300">Recent Activity</h4>
                     <motion.div
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-gray-700 rounded-lg"
                       animate={{
                         x: [0, 2, 0]
                       }}
@@ -771,12 +770,12 @@ function LoginForm() {
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-sm text-gray-700">Payment received</span>
+                        <span className="text-sm text-gray-300">Payment received</span>
                       </div>
                       <span className="text-xs text-gray-500">2h ago</span>
                     </motion.div>
                     <motion.div
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-gray-700 rounded-lg"
                       animate={{
                         x: [0, -1, 0]
                       }}
@@ -789,17 +788,17 @@ function LoginForm() {
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span className="text-sm text-gray-700">Credit report updated</span>
-            </div>
+                        <span className="text-sm text-gray-300">Credit report updated</span>
+                      </div>
                       <span className="text-xs text-gray-500">1d ago</span>
-          </motion.div>
-        </div>
-      </div>
+                    </motion.div>
+                  </div>
+                </div>
               </motion.div>
               
               {/* Admin Portal Screenshot */}
               <motion.div
-                className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200 relative"
+                className="bg-gray-800 rounded-xl shadow-2xl overflow-hidden border border-gray-700 relative"
                 animate={{
                   scale: [1, 1.02, 1],
                   rotateY: [0, -2, 0]
@@ -817,17 +816,17 @@ function LoginForm() {
                 }}
               >
                 {/* Browser Header */}
-                <div className="bg-gray-100 px-4 py-3 flex items-center space-x-2 border-b">
+                <div className="bg-gray-700 px-4 py-3 flex items-center space-x-2 border-b border-gray-600">
                   <div className="flex space-x-2">
                     <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <div className="flex-1 bg-white rounded px-3 py-1 text-xs text-gray-500 ml-4">
+                  <div className="flex-1 bg-gray-600 rounded px-3 py-1 text-xs text-gray-300 ml-4">
                     credx.com/admin/dashboard
-        </div>
-      </div>
-
+                  </div>
+                </div>
+                
                 {/* Screenshot Content */}
                 <div className="p-4">
                   {/* Header */}
@@ -837,24 +836,24 @@ function LoginForm() {
                         <Settings className="w-4 h-4 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-800">Admin Dashboard</h3>
-                        <p className="text-sm text-gray-500">System Overview</p>
+                        <h3 className="text-lg font-semibold text-gray-100">Admin Dashboard</h3>
+                        <p className="text-sm text-gray-400">System Overview</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                         <span className="text-xs">🔔</span>
                       </div>
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                         <span className="text-xs">⚙️</span>
                       </div>
                     </div>
-          </div>
-          
+                  </div>
+                  
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <motion.div
-                      className="bg-purple-50 rounded-lg p-3"
+                      className="bg-purple-900/30 rounded-lg p-3"
                       animate={{
                         scale: [1, 1.02, 1]
                       }}
@@ -865,11 +864,11 @@ function LoginForm() {
                         delay: 2.5
                       }}
                     >
-                      <div className="text-2xl font-bold text-purple-600">1,247</div>
-                      <div className="text-sm text-gray-600">Total Users</div>
+                      <div className="text-2xl font-bold text-purple-400">1,247</div>
+                      <div className="text-sm text-gray-400">Total Users</div>
                     </motion.div>
                     <motion.div
-                      className="bg-orange-50 rounded-lg p-3"
+                      className="bg-orange-900/30 rounded-lg p-3"
                       animate={{
                         scale: [1, 1.02, 1]
                       }}
@@ -880,16 +879,16 @@ function LoginForm() {
                         delay: 3
                       }}
                     >
-                      <div className="text-2xl font-bold text-orange-600">99.9%</div>
-                      <div className="text-sm text-gray-600">Uptime</div>
+                      <div className="text-2xl font-bold text-orange-400">99.9%</div>
+                      <div className="text-sm text-gray-400">Uptime</div>
                     </motion.div>
-          </div>
-          
+                  </div>
+                  
                   {/* System Status */}
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-700">System Status</h4>
+                    <h4 className="text-sm font-semibold text-gray-300">System Status</h4>
                     <motion.div
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-gray-700 rounded-lg"
                       animate={{
                         x: [0, -2, 0]
                       }}
@@ -902,12 +901,12 @@ function LoginForm() {
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-sm text-gray-700">API Services</span>
+                        <span className="text-sm text-gray-300">API Services</span>
                       </div>
-                      <span className="text-xs text-green-600">Operational</span>
+                      <span className="text-xs text-green-400">Operational</span>
                     </motion.div>
                     <motion.div
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-gray-700 rounded-lg"
                       animate={{
                         x: [0, 1, 0]
                       }}
@@ -920,19 +919,19 @@ function LoginForm() {
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                        <span className="text-sm text-gray-700">Database</span>
+                        <span className="text-sm text-gray-300">Database</span>
                       </div>
-                      <span className="text-xs text-yellow-600">Maintenance</span>
+                      <span className="text-xs text-yellow-400">Maintenance</span>
                     </motion.div>
-          </div>
-        </div>
+                  </div>
+                </div>
               </motion.div>
             </div>
           </motion.div>
           
           {/* Professional credX Logo */}
           <motion.h1
-            className="text-7xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6"
+            className="text-7xl font-bold bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent mb-6"
             animate={{
               rotateY: [0, 360],
             }}
@@ -953,16 +952,16 @@ function LoginForm() {
             transition={{ duration: 0.8, delay: 0.5 }}
           >
             <div className="text-center">
-              <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">50K+</div>
-              <div className="text-sm text-slate-500">Transactions</div>
+              <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">50K+</div>
+              <div className="text-sm text-gray-400">Transactions</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-indigo-700 bg-clip-text text-transparent">99.5%</div>
-              <div className="text-sm text-slate-500">Accuracy</div>
+              <div className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-indigo-500 bg-clip-text text-transparent">99.5%</div>
+              <div className="text-sm text-gray-400">Accuracy</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">24/7</div>
-              <div className="text-sm text-slate-500">Support</div>
+              <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-purple-500 bg-clip-text text-transparent">24/7</div>
+              <div className="text-sm text-gray-400">Support</div>
             </div>
           </motion.div>
         </div>
@@ -973,7 +972,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="h-screen bg-gray-900 flex items-center justify-center text-white">Loading...</div>}>
       <LoginForm />
     </Suspense>
   )
