@@ -58,7 +58,7 @@
     "@react-three/postprocessing": "^2.15.11",
     "@supabase/auth-helpers-nextjs": "^0.8.7",
     "@supabase/auth-helpers-react": "^0.4.2",
-    "@supabase/auth-ui-react": "^0.4.6",
+    "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.38.0",
     "@use-gesture/react": "^10.3.1",

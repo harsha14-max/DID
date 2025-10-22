@@ -2,14 +2,16 @@
 
 import { useState, Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/components/providers/auth-provider'
 import { supabase } from '@/lib/supabase/client'
 import { CornerCircleBar } from '@/components/ui/corner-circle-bar'
 import { RotatingWheelAnimation } from '@/components/ui/rotating-wheel-animation'
 import { ParticleSystem } from '@/components/ui/particle-system'
 import { CredXLogo } from '@/components/ui/credX-logo'
+import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton'
 import Link from 'next/link'
+import { Eye, EyeOff, Mail, Lock, Shield, Sparkles, Zap, ArrowRight, CheckCircle, HelpCircle, Users, Settings, Monitor, BarChart3 } from 'lucide-react'
 
 function LoginForm() {
   const router = useRouter()
@@ -93,287 +95,771 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 relative overflow-hidden">
-      {/* Enhanced Particle System */}
-      <ParticleSystem count={20} speed={0.3} size={1} color="rgba(255, 255, 255, 0.3)" />
-      
-      {/* Animated Background Gradient */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700"
-        style={{ y }}
-      />
-      
-      {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-10 p-6">
-        <div className="flex justify-between items-center">
-          {/* Brand */}
-          <motion.div 
-            className="flex items-center space-x-3"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <CredXLogo size={32} className="shadow-lg" />
-            <span className="text-white text-lg font-medium">credX Platform</span>
-          </motion.div>
-          
-          {/* Navigation */}
-          <motion.nav 
-            className="flex space-x-6"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <Link href="/" className="text-white hover:text-blue-200 transition-colors">
-              Home
+    <div className="h-screen flex relative overflow-hidden">
+      {/* Home Button - Top Right Corner */}
+      <Link 
+        href="/"
+        className="absolute top-6 right-6 z-10 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 shadow-sm transition-all duration-200 hover:shadow-md"
+      >
+        <span className="text-gray-700 font-medium text-sm">Home</span>
             </Link>
-            <Link href="/auth/signup" className="text-white hover:text-blue-200 transition-colors">
-              Sign Up
-            </Link>
-          </motion.nav>
-        </div>
-      </header>
 
-      {/* Rotating Wheel Animation */}
-      <RotatingWheelAnimation />
-
-      {/* Main Content */}
-      <div className="flex items-center justify-center min-h-screen px-6">
-        <div className="w-full max-w-md">
-          {/* Main Heading */}
+      {/* Left Panel - Login Form */}
+      <div className="flex-1 bg-white flex items-center justify-center p-4">
+        <div className="w-full max-w-sm">
+          {/* Welcome Title */}
           <motion.div
+            className="mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 
-              className="text-4xl md:text-5xl font-bold mb-8 leading-tight"
-              style={{
-                backgroundImage: 'linear-gradient(45deg, #00C3FF 0%, #3E6FF6 25%, #8B5CF6 50%, #F59E0B 75%, #10B981 100%)',
-                backgroundSize: '400% 400%',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                color: 'transparent',
-                filter: 'contrast(1.3) brightness(1.2) saturate(1.1)',
-                letterSpacing: '-0.02em',
-                textShadow: '0 0 40px rgba(0,0,0,0.4)',
-                animation: 'gradientShift 6s ease infinite'
-              }}
-            >
-              Sign in to your account
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              Welcome to credX
             </h1>
           </motion.div>
 
           {/* Login Form */}
           <motion.form
             onSubmit={handleSubmit}
-            className="space-y-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            className="space-y-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             {/* Email Field */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <label className="block text-white text-sm font-medium mb-2">
-                Email *
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Email
               </label>
-              <div className="relative group">
-                <motion.input
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full bg-transparent border-b-2 border-white text-white placeholder-white/70 focus:outline-none focus:border-blue-300 py-2 transition-all duration-300 group-hover:border-blue-200"
-                  placeholder="Enter your email"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  placeholder="yatingzang0215@gmail.com"
                   required
-                  whileFocus={{ scale: 1.02 }}
-                />
-                <motion.div
-                  className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400"
-                  initial={{ width: 0 }}
-                  whileFocus={{ width: "100%" }}
-                  transition={{ duration: 0.3 }}
                 />
               </div>
             </motion.div>
 
             {/* Password Field */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <label className="block text-white text-sm font-medium mb-2">
-                Password *
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Password
               </label>
-              <div className="relative group">
-                <motion.input
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full bg-transparent border-b-2 border-white text-white placeholder-white/70 focus:outline-none focus:border-blue-300 py-2 transition-all duration-300 group-hover:border-blue-200"
-                  placeholder="Enter your password"
+                  className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  placeholder="********"
                   required
-                  whileFocus={{ scale: 1.02 }}
                 />
-                <motion.button
+                <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-0 top-2 text-white/70 hover:text-white transition-colors"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? 'Hide' : 'Show'}
-                </motion.button>
-                <motion.div
-                  className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400"
-                  initial={{ width: 0 }}
-                  whileFocus={{ width: "100%" }}
-                  transition={{ duration: 0.3 }}
-                />
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
             </motion.div>
 
-            {/* Role Selection */}
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Portal Type
+            {/* Portal Type Selection - Improved Design */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              <label className="block text-gray-700 text-sm font-medium mb-3">
+                Choose Your Portal
               </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value as 'admin' | 'customer' }))}
-                className="w-full bg-transparent border-b-2 border-white text-white focus:outline-none focus:border-blue-300 py-2"
-              >
-                <option value="customer" className="bg-blue-800">Customer Portal</option>
-                <option value="admin" className="bg-blue-800">Admin Portal</option>
-              </select>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Customer Portal Option */}
+                <motion.button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, role: 'customer' }))}
+                  className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                    formData.role === 'customer'
+                      ? 'border-blue-500 bg-blue-50 shadow-md'
+                      : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="flex flex-col items-center space-y-2">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      formData.role === 'customer' ? 'bg-blue-500' : 'bg-gray-200'
+                    }`}>
+                      <Users className={`w-4 h-4 ${
+                        formData.role === 'customer' ? 'text-white' : 'text-gray-500'
+                      }`} />
+                    </div>
+                    <span className={`text-sm font-medium ${
+                      formData.role === 'customer' ? 'text-blue-700' : 'text-gray-700'
+                    }`}>
+                      Customer
+                    </span>
+                  </div>
+                </motion.button>
+
+                {/* Admin Portal Option */}
+                <motion.button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, role: 'admin' }))}
+                  className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                    formData.role === 'admin'
+                      ? 'border-blue-500 bg-blue-50 shadow-md'
+                      : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="flex flex-col items-center space-y-2">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      formData.role === 'admin' ? 'bg-blue-500' : 'bg-gray-200'
+                    }`}>
+                      <Settings className={`w-4 h-4 ${
+                        formData.role === 'admin' ? 'text-white' : 'text-gray-500'
+                      }`} />
+                    </div>
+                    <span className={`text-sm font-medium ${
+                      formData.role === 'admin' ? 'text-blue-700' : 'text-gray-700'
+                    }`}>
+                      Admin
+                    </span>
+                  </div>
+                </motion.button>
             </div>
+            </motion.div>
 
             {/* Error Message */}
+            <AnimatePresence>
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-red-300 text-sm bg-red-900/20 border border-red-500/30 rounded p-3"
+                  exit={{ opacity: 0, y: -10 }}
+                  className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm"
               >
                 {error}
               </motion.div>
             )}
+            </AnimatePresence>
 
-            {/* Submit Button */}
+            {/* Login Button */}
             <motion.button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-400 hover:to-purple-400 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <span className="relative z-10">{isLoading ? 'Signing in...' : 'Sign In'}</span>
-              
-              {/* Shimmer Effect */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                initial={{ x: '-100%' }}
-                whileHover={{ x: '100%' }}
-                transition={{ duration: 0.6 }}
-              />
-              
-              {/* Glow Effect */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-sm opacity-0"
-                whileHover={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              />
+              {isLoading ? 'Signing in...' : 'Login in'}
             </motion.button>
           </motion.form>
 
-          {/* Additional Links */}
+          {/* Sign Up Link */}
           <motion.div
-            className="mt-8 space-y-4"
+            className="mt-6 text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
           >
-            <div className="text-center">
-              <Link 
-                href="/auth/forgot-password" 
-                className="text-white/80 hover:text-white transition-colors text-sm"
-              >
-                Forgot your password?
-              </Link>
-            </div>
-            
-            <div className="text-center">
-              <span className="text-white/80 text-sm">
+            <span className="text-gray-600 text-sm">
                 Don't have an account?{' '}
               </span>
               <Link 
                 href="/auth/signup" 
-                className="text-white hover:text-blue-200 transition-colors text-sm font-medium"
+              className="text-blue-600 hover:text-blue-700 font-medium underline"
               >
-                Sign up
+              Sign Up!
               </Link>
-            </div>
           </motion.div>
 
-          {/* Real Authentication Notice */}
+          {/* Help Section - Redesigned */}
           <motion.div
-            className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20"
+            className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
           >
-            <h4 className="text-white font-medium mb-3 text-sm">Secure Authentication</h4>
-            <div className="text-white/80 text-xs space-y-2">
-              <div>🔒 Real Supabase authentication enabled</div>
-              <div>✅ Email verification required</div>
-              <div>🛡️ Secure password validation</div>
-              <div>🎯 Portal type must match your account role</div>
+            <div className="flex items-start space-x-3">
+              {/* Question Mark Icon in Circle */}
+              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                <HelpCircle className="w-4 h-4 text-gray-600" />
+              </div>
+              
+              <div className="flex-1">
+                {/* Question/Heading */}
+                <h3 className="text-gray-800 text-sm font-medium mb-2">
+                  Can you change your plan?
+                </h3>
+                
+                {/* Descriptive Text */}
+                <p className="text-gray-600 text-xs mb-3 leading-relaxed">
+                  Whenever you want. credX will also change with you according to your needs.
+                </p>
+                
+                {/* Contact Us Link */}
+                <Link 
+                  href="/contact" 
+                  className="text-blue-600 hover:text-blue-700 text-xs font-medium underline transition-colors duration-200"
+                >
+                  Contact Us
+                </Link>
+              </div>
             </div>
           </motion.div>
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="absolute bottom-0 left-0 right-0 p-6">
-        <div className="flex justify-between items-center">
-          {/* Social Links */}
-          <div className="flex space-x-4">
-            <a href="#" className="text-white/80 hover:text-white transition-colors text-sm">
-              LinkedIn
-            </a>
-            <a href="#" className="text-white/80 hover:text-white transition-colors text-sm">
-              Facebook
-            </a>
-            <a href="#" className="text-white/80 hover:text-white transition-colors text-sm">
-              Instagram
-            </a>
+      {/* Right Panel - Professional credX Showcase */}
+      <div className="flex-1 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+        {/* Rounded top-right corner */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-bl-full z-10"></div>
+        
+        {/* Enhanced Background Effects */}
+        <div className="absolute inset-0 opacity-20">
+          {/* Main Bubbles */}
+          <motion.div
+            className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full"
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, 180, 360],
+              y: [0, -20, 0],
+              opacity: [0.2, 0.4, 0.2]
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute top-32 right-20 w-16 h-16 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full"
+            animate={{
+              scale: [1, 1.4, 1],
+              rotate: [360, 180, 0],
+              y: [0, 15, 0],
+              opacity: [0.2, 0.5, 0.2]
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+          />
+          <motion.div
+            className="absolute bottom-20 left-16 w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full"
+            animate={{
+              scale: [1, 1.5, 1],
+              rotate: [0, -180, -360],
+              y: [0, -10, 0],
+              opacity: [0.2, 0.4, 0.2]
+            }}
+            transition={{
+              duration: 7,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 4
+            }}
+          />
+          <motion.div
+            className="absolute bottom-32 right-10 w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full"
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [360, 0, -360],
+              y: [0, 25, 0],
+              opacity: [0.2, 0.5, 0.2]
+            }}
+            transition={{
+              duration: 9,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
+          />
+          <motion.div
+            className="absolute top-40 left-1/2 w-8 h-8 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full"
+            animate={{
+              scale: [1, 1.6, 1],
+              rotate: [0, 90, 180, 270, 360],
+              y: [0, -15, 0],
+              opacity: [0.2, 0.4, 0.2]
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 3
+            }}
+          />
+          
+          {/* Additional Floating Elements */}
+          <motion.div
+            className="absolute top-20 right-1/3 w-6 h-6 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full"
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, 360, 720],
+              x: [0, 20, 0],
+              y: [0, -10, 0]
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1.5
+            }}
+          />
+          <motion.div
+            className="absolute bottom-40 left-1/3 w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full"
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [360, 0, -360],
+              x: [0, -15, 0],
+              y: [0, 20, 0]
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2.5
+            }}
+          />
+          <motion.div
+            className="absolute top-60 right-1/4 w-4 h-4 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full"
+            animate={{
+              scale: [1, 1.8, 1],
+              rotate: [0, -180, -360],
+              x: [0, 25, 0],
+              y: [0, -25, 0]
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 4.5
+            }}
+          />
+          
+          {/* Geometric Shapes */}
+          <motion.div
+            className="absolute top-16 right-1/2 w-14 h-14 bg-gradient-to-br from-violet-400 to-violet-600 transform rotate-45"
+            animate={{
+              scale: [1, 1.1, 1],
+              rotate: [45, 225, 405],
+              opacity: [0.1, 0.3, 0.1]
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 0.5
+            }}
+          />
+          <motion.div
+            className="absolute bottom-16 left-1/4 w-18 h-18 bg-gradient-to-br from-rose-400 to-rose-600 transform rotate-12"
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [12, 192, 372],
+              opacity: [0.1, 0.25, 0.1]
+            }}
+            transition={{
+              duration: 14,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 3.5
+            }}
+          />
           </div>
           
-          {/* Privacy Policy */}
-          <div className="text-white/80 text-sm">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-          </div>
+        {/* Main Content */}
+        <div className="flex flex-col items-center justify-center h-full relative p-4">
+          {/* Professional Header */}
+          <motion.div
+            className="text-center mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.h2 
+              className="text-lg font-semibold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent mb-1"
+              animate={{
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              Welcome to
+            </motion.h2>
+            <p className="text-slate-600 text-sm font-medium">Enterprise Credit Management</p>
+          </motion.div>
           
-          {/* Copyright */}
-          <div className="text-white/60 text-xs">
-            © 2024 by credX Platform. Made with Next.js
+          {/* Portal Screenshots */}
+          <motion.div
+            className="w-full max-w-4xl mb-8"
+            animate={{
+              y: [0, -5, 0]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            {/* Screenshot Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Customer Portal Screenshot */}
+              <motion.div
+                className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200 relative"
+                animate={{
+                  scale: [1, 1.02, 1],
+                  rotateY: [0, 2, 0]
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0
+                }}
+                whileHover={{
+                  scale: 1.05,
+                  rotateY: 5,
+                  transition: { duration: 0.3 }
+                }}
+              >
+                {/* Browser Header */}
+                <div className="bg-gray-100 px-4 py-3 flex items-center space-x-2 border-b">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                    <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                    <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                  </div>
+                  <div className="flex-1 bg-white rounded px-3 py-1 text-xs text-gray-500 ml-4">
+                    credx.com/customer/dashboard
+                  </div>
+                </div>
+                
+                {/* Screenshot Content */}
+                <div className="p-4">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <Users className="w-4 h-4 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800">Customer Dashboard</h3>
+                        <p className="text-sm text-gray-500">Welcome back, John Doe</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-xs">🔔</span>
+                      </div>
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-xs">👤</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Dashboard Grid */}
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <motion.div
+                      className="bg-blue-50 rounded-lg p-3"
+                      animate={{
+                        scale: [1, 1.02, 1]
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.5
+                      }}
+                    >
+                      <div className="text-2xl font-bold text-blue-600">$12,450</div>
+                      <div className="text-sm text-gray-600">Credit Score</div>
+                    </motion.div>
+                    <motion.div
+                      className="bg-green-50 rounded-lg p-3"
+                      animate={{
+                        scale: [1, 1.02, 1]
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 1
+                      }}
+                    >
+                      <div className="text-2xl font-bold text-green-600">3</div>
+                      <div className="text-sm text-gray-600">Active Loans</div>
+                    </motion.div>
+                  </div>
+                  
+                  {/* Recent Activity */}
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold text-gray-700">Recent Activity</h4>
+                    <motion.div
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      animate={{
+                        x: [0, 2, 0]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 1.5
+                      }}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-sm text-gray-700">Payment received</span>
+                      </div>
+                      <span className="text-xs text-gray-500">2h ago</span>
+                    </motion.div>
+                    <motion.div
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      animate={{
+                        x: [0, -1, 0]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 2
+                      }}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span className="text-sm text-gray-700">Credit report updated</span>
+                      </div>
+                      <span className="text-xs text-gray-500">1d ago</span>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Admin Portal Screenshot */}
+              <motion.div
+                className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200 relative"
+                animate={{
+                  scale: [1, 1.02, 1],
+                  rotateY: [0, -2, 0]
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 2
+                }}
+                whileHover={{
+                  scale: 1.05,
+                  rotateY: -5,
+                  transition: { duration: 0.3 }
+                }}
+              >
+                {/* Browser Header */}
+                <div className="bg-gray-100 px-4 py-3 flex items-center space-x-2 border-b">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                    <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                    <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                  </div>
+                  <div className="flex-1 bg-white rounded px-3 py-1 text-xs text-gray-500 ml-4">
+                    credx.com/admin/dashboard
+                  </div>
+                </div>
+                
+                {/* Screenshot Content */}
+                <div className="p-4">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                        <Settings className="w-4 h-4 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800">Admin Dashboard</h3>
+                        <p className="text-sm text-gray-500">System Overview</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-xs">🔔</span>
+                      </div>
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-xs">⚙️</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <motion.div
+                      className="bg-purple-50 rounded-lg p-3"
+                      animate={{
+                        scale: [1, 1.02, 1]
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 2.5
+                      }}
+                    >
+                      <div className="text-2xl font-bold text-purple-600">1,247</div>
+                      <div className="text-sm text-gray-600">Total Users</div>
+                    </motion.div>
+                    <motion.div
+                      className="bg-orange-50 rounded-lg p-3"
+                      animate={{
+                        scale: [1, 1.02, 1]
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 3
+                      }}
+                    >
+                      <div className="text-2xl font-bold text-orange-600">99.9%</div>
+                      <div className="text-sm text-gray-600">Uptime</div>
+                    </motion.div>
+                  </div>
+                  
+                  {/* System Status */}
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold text-gray-700">System Status</h4>
+                    <motion.div
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      animate={{
+                        x: [0, -2, 0]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 3.5
+                      }}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-sm text-gray-700">API Services</span>
+                      </div>
+                      <span className="text-xs text-green-600">Operational</span>
+                    </motion.div>
+                    <motion.div
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      animate={{
+                        x: [0, 1, 0]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 4
+                      }}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                        <span className="text-sm text-gray-700">Database</span>
+                      </div>
+                      <span className="text-xs text-yellow-600">Maintenance</span>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+          
+          {/* Professional credX Logo */}
+          <motion.h1
+            className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6"
+            animate={{
+              rotateY: [0, 360],
+              scale: [1, 1.05, 1],
+              backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            credX
+          </motion.h1>
+          
+          {/* Professional Stats */}
+          <motion.div
+            className="grid grid-cols-3 gap-6 w-full max-w-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <div className="text-center">
+              <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">50K+</div>
+              <div className="text-sm text-slate-500">Transactions</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-indigo-700 bg-clip-text text-transparent">99.5%</div>
+              <div className="text-sm text-slate-500">Accuracy</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">24/7</div>
+              <div className="text-sm text-slate-500">Support</div>
+          </div>
+          </motion.div>
+          
+          {/* Subtle Floating Elements */}
+          <motion.div
+            className="absolute top-20 right-16 w-2 h-2 bg-blue-500 rounded-full opacity-40"
+            animate={{
+              y: [0, -15, 0],
+              opacity: [0.4, 0.8, 0.4]
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute bottom-24 left-12 w-1.5 h-1.5 bg-indigo-500 rounded-full opacity-40"
+            animate={{
+              y: [0, 12, 0],
+              opacity: [0.4, 0.7, 0.4]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+          />
           </div>
         </div>
-      </footer>
-
-      {/* Corner Circle Bar */}
-      <CornerCircleBar />
     </div>
   )
 }
