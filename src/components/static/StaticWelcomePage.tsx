@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -8,10 +8,8 @@ import { CredXLogo } from '@/components/ui/credX-logo'
 export function StaticWelcomePage() {
   const [theme, setTheme] = useState('dark')
   const [isLoaded, setIsLoaded] = useState(false)
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
     setIsLoaded(true)
   }, [])
 
@@ -239,9 +237,13 @@ export function StaticWelcomePage() {
   }
 
   // Prevent SSR issues with client-only components
-  if (!mounted) {
+  if (typeof window === 'undefined') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-800 via-indigo-900 to-blue-800 text-white">
+      <div className={`min-h-screen transition-all duration-500 ${
+        theme === 'dark' 
+          ? 'bg-gradient-to-br from-slate-800 via-indigo-900 to-blue-800 text-white' 
+          : 'bg-gradient-to-br from-blue-50 via-white to-blue-100 text-gray-900'
+      }`}>
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             credX
@@ -348,7 +350,7 @@ export function StaticWelcomePage() {
                 : 'bg-white/10 hover:bg-white/20 text-white'
             }`}
           >
-            {theme === 'light' ? '🌙' : '☀️'}
+            {theme === 'light' ? '≡ƒîÖ' : 'ΓÿÇ∩╕Å'}
           </button>
           
           <Link href="/auth/login">
@@ -371,6 +373,27 @@ export function StaticWelcomePage() {
 
         {/* Hero Section */}
         <section className="relative overflow-hidden">
+          
+          {/* Moon in Dark Mode */}
+          {theme === 'dark' && (
+            <div className="fixed top-20 right-20 z-20 pointer-events-none">
+              <div className="relative">
+                {/* Moon */}
+                <div className="w-16 h-16 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full shadow-2xl"
+                     style={{
+                       boxShadow: '0 0 30px rgba(255, 255, 255, 0.3), 0 0 60px rgba(255, 255, 255, 0.1)'
+                     }}>
+                  {/* Moon craters */}
+                  <div className="absolute top-3 left-3 w-2 h-2 bg-gray-400 rounded-full opacity-60"></div>
+                  <div className="absolute top-6 right-4 w-1.5 h-1.5 bg-gray-400 rounded-full opacity-50"></div>
+                  <div className="absolute bottom-4 left-5 w-1 h-1 bg-gray-400 rounded-full opacity-40"></div>
+                  <div className="absolute bottom-2 right-2 w-1.5 h-1.5 bg-gray-400 rounded-full opacity-45"></div>
+                </div>
+                {/* Moon glow effect */}
+                <div className="absolute inset-0 w-16 h-16 bg-white rounded-full opacity-20 blur-xl"></div>
+              </div>
+            </div>
+          )}
 
         <div className="relative z-10 container mx-auto px-6 py-32 text-center">
           <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
@@ -435,7 +458,7 @@ export function StaticWelcomePage() {
               }`}>
                 <div className="flex flex-col items-center space-y-4 group-hover:scale-110 transition-transform duration-300">
                   <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <span className="text-2xl">🏦</span>
+                    <span className="text-2xl">≡ƒÅª</span>
                   </div>
                   <span className={`text-sm font-medium transition-colors duration-300 ${
                     theme === 'light' ? 'text-gray-600' : 'text-blue-300'
@@ -463,7 +486,7 @@ export function StaticWelcomePage() {
                 
                 <div className="flex flex-col items-center space-y-4 group-hover:scale-110 transition-transform duration-300">
                   <div className="w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <span className="text-2xl">👤</span>
+                    <span className="text-2xl">≡ƒæñ</span>
                   </div>
                   <span className={`text-sm font-medium transition-colors duration-300 ${
                     theme === 'light' ? 'text-gray-600' : 'text-purple-300'
@@ -509,7 +532,7 @@ export function StaticWelcomePage() {
                   theme === 'light'
                     ? 'text-gray-800 group-hover:text-purple-600'
                     : 'text-white group-hover:text-blue-300'
-                }`}>🔗 Trusted Middleman</h3>
+                }`}>≡ƒöù Trusted Middleman</h3>
                 <p className={`transition-colors duration-300 ${
                   theme === 'light'
                     ? 'text-gray-600 group-hover:text-gray-700'
@@ -529,7 +552,7 @@ export function StaticWelcomePage() {
                   theme === 'light'
                     ? 'text-gray-800 group-hover:text-purple-600'
                     : 'text-white group-hover:text-purple-300'
-                }`}>🛡️ Self-Sovereign Identity</h3>
+                }`}>≡ƒ¢í∩╕Å Self-Sovereign Identity</h3>
                 <p className={`transition-colors duration-300 ${
                   theme === 'light'
                     ? 'text-gray-600 group-hover:text-gray-700'
@@ -609,11 +632,11 @@ export function StaticWelcomePage() {
 
           <div className="grid md:grid-cols-5 gap-6">
             {[
-              { icon: '📊', title: 'Dashboard', desc: 'Overview of tickets, services, and financial actions', color: 'from-blue-500/20 to-cyan-500/20' },
-              { icon: '🎫', title: 'Tickets', desc: 'Create, track, and filter support requests', color: 'from-green-500/20 to-emerald-500/20' },
-              { icon: '⭐', title: 'Ratings', desc: 'Rate resolved tickets and log feedback securely', color: 'from-yellow-500/20 to-orange-500/20' },
-              { icon: '🏪', title: 'Services', desc: 'Browse offered lender products and services', color: 'from-purple-500/20 to-pink-500/20' },
-              { icon: '❓', title: 'Help', desc: 'Access knowledge base and FAQ resources', color: 'from-indigo-500/20 to-blue-500/20' }
+              { icon: '≡ƒôè', title: 'Dashboard', desc: 'Overview of tickets, services, and financial actions', color: 'from-blue-500/20 to-cyan-500/20' },
+              { icon: '≡ƒÄ½', title: 'Tickets', desc: 'Create, track, and filter support requests', color: 'from-green-500/20 to-emerald-500/20' },
+              { icon: 'Γ¡É', title: 'Ratings', desc: 'Rate resolved tickets and log feedback securely', color: 'from-yellow-500/20 to-orange-500/20' },
+              { icon: '≡ƒÅ¬', title: 'Services', desc: 'Browse offered lender products and services', color: 'from-purple-500/20 to-pink-500/20' },
+              { icon: 'Γ¥ô', title: 'Help', desc: 'Access knowledge base and FAQ resources', color: 'from-indigo-500/20 to-blue-500/20' }
             ].map((feature, index) => (
               <div key={index} className={`p-6 bg-gradient-to-br ${feature.color} backdrop-blur-sm rounded-xl border hover:scale-110 hover:rotate-1 transition-all duration-300 transform group cursor-pointer ${
                 theme === 'light'
@@ -661,16 +684,16 @@ export function StaticWelcomePage() {
 
           <div className="grid md:grid-cols-4 lg:grid-cols-5 gap-6">
             {[
-              { icon: '📊', title: 'Dashboard', desc: 'Complete system overview and analytics', color: 'from-blue-500/20 to-indigo-500/20' },
-              { icon: '🎫', title: 'Tickets', desc: 'Approve and manage borrower requests', color: 'from-green-500/20 to-teal-500/20' },
-              { icon: '👥', title: 'Users', desc: 'Manage borrower and lender profiles', color: 'from-purple-500/20 to-violet-500/20' },
-              { icon: '🏦', title: 'Assets', desc: 'Financial partners and lending pools', color: 'from-emerald-500/20 to-green-500/20' },
-              { icon: '⚙️', title: 'Rules Engine', desc: 'Automate actions with if-then logic', color: 'from-orange-500/20 to-red-500/20' },
-              { icon: '🔄', title: 'Workflow', desc: 'Visual builder for operations lifecycle', color: 'from-cyan-500/20 to-blue-500/20' },
-              { icon: '📈', title: 'Analytics', desc: 'Centralized insights and visualization', color: 'from-pink-500/20 to-rose-500/20' },
-              { icon: '📚', title: 'Knowledge Base', desc: 'Add FAQs and resources for users', color: 'from-amber-500/20 to-yellow-500/20' },
-              { icon: '🔌', title: 'Integrations', desc: 'REST APIs for third-party connections', color: 'from-slate-500/20 to-gray-500/20' },
-              { icon: '⚙️', title: 'Settings', desc: 'Manage global configurations', color: 'from-indigo-500/20 to-purple-500/20' }
+              { icon: '≡ƒôè', title: 'Dashboard', desc: 'Complete system overview and analytics', color: 'from-blue-500/20 to-indigo-500/20' },
+              { icon: '≡ƒÄ½', title: 'Tickets', desc: 'Approve and manage borrower requests', color: 'from-green-500/20 to-teal-500/20' },
+              { icon: '≡ƒæÑ', title: 'Users', desc: 'Manage borrower and lender profiles', color: 'from-purple-500/20 to-violet-500/20' },
+              { icon: '≡ƒÅª', title: 'Assets', desc: 'Financial partners and lending pools', color: 'from-emerald-500/20 to-green-500/20' },
+              { icon: 'ΓÜÖ∩╕Å', title: 'Rules Engine', desc: 'Automate actions with if-then logic', color: 'from-orange-500/20 to-red-500/20' },
+              { icon: '≡ƒöä', title: 'Workflow', desc: 'Visual builder for operations lifecycle', color: 'from-cyan-500/20 to-blue-500/20' },
+              { icon: '≡ƒôê', title: 'Analytics', desc: 'Centralized insights and visualization', color: 'from-pink-500/20 to-rose-500/20' },
+              { icon: '≡ƒôÜ', title: 'Knowledge Base', desc: 'Add FAQs and resources for users', color: 'from-amber-500/20 to-yellow-500/20' },
+              { icon: '≡ƒöî', title: 'Integrations', desc: 'REST APIs for third-party connections', color: 'from-slate-500/20 to-gray-500/20' },
+              { icon: 'ΓÜÖ∩╕Å', title: 'Settings', desc: 'Manage global configurations', color: 'from-indigo-500/20 to-purple-500/20' }
             ].map((feature, index) => (
               <div key={index} className={`p-6 bg-gradient-to-br ${feature.color} backdrop-blur-sm rounded-xl border hover:scale-105 hover:-rotate-1 transition-all duration-300 transform group cursor-pointer ${
                 theme === 'light'
@@ -717,7 +740,7 @@ export function StaticWelcomePage() {
           <div className="grid md:grid-cols-3 gap-12">
             <div className="text-center group">
               <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 hover:scale-110 hover:rotate-6 transition-all duration-300 transform shadow-lg hover:shadow-xl">
-                <span className="text-3xl group-hover:scale-125 transition-transform duration-300">👤</span>
+                <span className="text-3xl group-hover:scale-125 transition-transform duration-300">≡ƒæñ</span>
               </div>
               <h3 className={`text-2xl font-semibold mb-4 transition-colors duration-300 ${
                 theme === 'light'
@@ -735,7 +758,7 @@ export function StaticWelcomePage() {
 
             <div className="text-center group">
               <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6 hover:scale-110 hover:rotate-6 transition-all duration-300 transform shadow-lg hover:shadow-xl">
-                <span className="text-3xl group-hover:scale-125 transition-transform duration-300">🔐</span>
+                <span className="text-3xl group-hover:scale-125 transition-transform duration-300">≡ƒöÉ</span>
               </div>
               <h3 className={`text-2xl font-semibold mb-4 transition-colors duration-300 ${
                 theme === 'light'
@@ -753,7 +776,7 @@ export function StaticWelcomePage() {
 
             <div className="text-center group">
               <div className="w-20 h-20 bg-gradient-to-r from-pink-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6 hover:scale-110 hover:rotate-6 transition-all duration-300 transform shadow-lg hover:shadow-xl">
-                <span className="text-3xl group-hover:scale-125 transition-transform duration-300">✅</span>
+                <span className="text-3xl group-hover:scale-125 transition-transform duration-300">Γ£à</span>
               </div>
               <h3 className={`text-2xl font-semibold mb-4 transition-colors duration-300 ${
                 theme === 'light'
@@ -778,7 +801,7 @@ export function StaticWelcomePage() {
           }`}>
             <div className="flex items-center justify-between">
               <div className="text-center group-hover:scale-110 transition-transform duration-300">
-                <div className="text-2xl mb-2 group-hover:rotate-12 transition-transform duration-300">👤</div>
+                <div className="text-2xl mb-2 group-hover:rotate-12 transition-transform duration-300">≡ƒæñ</div>
                 <span className={`font-semibold transition-colors duration-300 ${
                   theme === 'light'
                     ? 'text-gray-800 group-hover:text-blue-600'
@@ -795,7 +818,7 @@ export function StaticWelcomePage() {
                 <div className="w-16 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded group-hover:from-pink-400 group-hover:to-red-400 transition-all duration-300"></div>
               </div>
               <div className="text-center group-hover:scale-110 transition-transform duration-300">
-                <div className="text-2xl mb-2 group-hover:rotate-12 transition-transform duration-300">🏦</div>
+                <div className="text-2xl mb-2 group-hover:rotate-12 transition-transform duration-300">≡ƒÅª</div>
                 <span className={`font-semibold transition-colors duration-300 ${
                   theme === 'light'
                     ? 'text-gray-800 group-hover:text-green-600'
@@ -824,11 +847,11 @@ export function StaticWelcomePage() {
 
           <div className="grid md:grid-cols-5 gap-8">
             {[
-              { icon: '🤖', title: 'AI Credit Scoring', desc: 'Privacy-preserving and decentralized', color: 'from-blue-500/20 to-indigo-500/20' },
-              { icon: '🔒', title: 'ZKP Verification', desc: 'Zero data exposure', color: 'from-green-500/20 to-emerald-500/20' },
-              { icon: '⚙️', title: 'BSM Integration', desc: 'Tickets, workflows, analytics', color: 'from-purple-500/20 to-violet-500/20' },
-              { icon: '🔄', title: 'Rules Engine', desc: 'Automated approval system', color: 'from-orange-500/20 to-red-500/20' },
-              { icon: '⛓️', title: 'Blockchain DID', desc: 'Self-sovereign identity', color: 'from-cyan-500/20 to-blue-500/20' }
+              { icon: '≡ƒñû', title: 'AI Credit Scoring', desc: 'Privacy-preserving and decentralized', color: 'from-blue-500/20 to-indigo-500/20' },
+              { icon: '≡ƒöÆ', title: 'ZKP Verification', desc: 'Zero data exposure', color: 'from-green-500/20 to-emerald-500/20' },
+              { icon: 'ΓÜÖ∩╕Å', title: 'BSM Integration', desc: 'Tickets, workflows, analytics', color: 'from-purple-500/20 to-violet-500/20' },
+              { icon: '≡ƒöä', title: 'Rules Engine', desc: 'Automated approval system', color: 'from-orange-500/20 to-red-500/20' },
+              { icon: 'Γ¢ô∩╕Å', title: 'Blockchain DID', desc: 'Self-sovereign identity', color: 'from-cyan-500/20 to-blue-500/20' }
             ].map((feature, index) => (
               <div key={index} className="text-center group cursor-pointer">
                 <div className={`w-24 h-24 bg-gradient-to-r ${feature.color} backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300 border hover:shadow-xl ${
@@ -869,12 +892,12 @@ export function StaticWelcomePage() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
             {[
-              { name: 'Blockchain', icon: '⛓️', color: 'from-slate-500/20 to-gray-500/20' },
-              { name: 'AI & ML', icon: '🤖', color: 'from-blue-500/20 to-indigo-500/20' },
-              { name: 'Decentralized Ledger', icon: '📊', color: 'from-green-500/20 to-emerald-500/20' },
-              { name: 'REST APIs', icon: '🔌', color: 'from-purple-500/20 to-violet-500/20' },
-              { name: 'Secure Wallet', icon: '🔐', color: 'from-orange-500/20 to-red-500/20' },
-              { name: 'Workflow Automation', icon: '🔄', color: 'from-cyan-500/20 to-blue-500/20' }
+              { name: 'Blockchain', icon: 'Γ¢ô∩╕Å', color: 'from-slate-500/20 to-gray-500/20' },
+              { name: 'AI & ML', icon: '≡ƒñû', color: 'from-blue-500/20 to-indigo-500/20' },
+              { name: 'Decentralized Ledger', icon: '≡ƒôè', color: 'from-green-500/20 to-emerald-500/20' },
+              { name: 'REST APIs', icon: '≡ƒöî', color: 'from-purple-500/20 to-violet-500/20' },
+              { name: 'Secure Wallet', icon: '≡ƒöÉ', color: 'from-orange-500/20 to-red-500/20' },
+              { name: 'Workflow Automation', icon: '≡ƒöä', color: 'from-cyan-500/20 to-blue-500/20' }
             ].map((tech, index) => (
               <div key={index} className={`text-center p-6 bg-gradient-to-br ${tech.color} backdrop-blur-sm rounded-xl border hover:scale-110 hover:rotate-2 transition-all duration-300 transform group cursor-pointer ${
                 theme === 'light'

@@ -1,5 +1,5 @@
-import { StaticWelcomePage } from '@/components/static/StaticWelcomePage'
+import SolarSystemWelcomePage from '@/components/static/SolarSystemWelcomePage'
 
 export default function Home() {
-  return <StaticWelcomePage />
+  return <SolarSystemWelcomePage />
 }
