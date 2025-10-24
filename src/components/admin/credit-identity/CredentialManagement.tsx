@@ -216,8 +216,8 @@ export default function CredentialManagement() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active': return <Badge variant="success" className="bg-green-100 text-green-700">Active</Badge>
-      case 'expired': return <Badge variant="warning" className="bg-yellow-100 text-yellow-700">Expired</Badge>
+      case 'active': return <Badge variant="default" className="bg-green-100 text-green-700">Active</Badge>
+      case 'expired': return <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">Expired</Badge>
       case 'revoked': return <Badge variant="destructive" className="bg-red-100 text-red-700">Revoked</Badge>
       default: return <Badge variant="secondary">Unknown</Badge>
     }

@@ -31,8 +31,7 @@ export default function AuthCallback() {
           console.error('OAuth callback error:', error)
           console.error('Error details:', {
             message: error.message,
-            status: error.status,
-            statusText: error.statusText
+            status: error.status
           })
           setError(`OAuth Error: ${error.message}`)
           setStatus('error')

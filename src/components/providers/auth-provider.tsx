@@ -346,6 +346,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     resetPassword,
     updateProfile,
+    fetchUserProfile,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

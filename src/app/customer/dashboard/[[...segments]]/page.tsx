@@ -255,9 +255,9 @@ export default function CustomerDashboard({ params }: { params: { segments?: str
       
       // Show loading state
       const logoutButton = document.querySelector('[data-logout-button]')
-      if (logoutButton) {
+      if (logoutButton && 'disabled' in logoutButton) {
         logoutButton.textContent = 'Logging out...'
-        logoutButton.disabled = true
+        ;(logoutButton as HTMLButtonElement).disabled = true
       }
       
       await signOut()
@@ -562,11 +562,11 @@ function DashboardContent({ data }: { data: any }) {
     <div className="space-y-8">
       {/* Enhanced Welcome Section with Live Clock */}
       <div className="mb-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 opacity-50"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 via-purple-50/50 to-pink-50/50 opacity-50"></div>
         <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+              <h2 className="text-4xl font-bold text-gray-900 mb-2">
                 Welcome back, Test Customer! 👋
               </h2>
               <p className="text-gray-600 text-lg">
@@ -588,85 +588,85 @@ function DashboardContent({ data }: { data: any }) {
       {/* Enhanced Action Cards with Animations */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card 
-          className={`bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:shadow-xl ${isAnimating ? 'animate-pulse' : ''}`}
+          className={`bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 hover:border-blue-300 transition-all duration-300 cursor-pointer hover:shadow-md ${isAnimating ? 'animate-pulse' : ''}`}
           onClick={() => handleCardClick('/customer/dashboard/tickets')}
         >
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                <MessageSquare className="h-6 w-6" />
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <MessageSquare className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg">View Tickets</h3>
-                <p className="text-blue-100">Check your support requests</p>
+                <h3 className="font-semibold text-lg text-gray-900">View Tickets</h3>
+                <p className="text-gray-600">Check your support requests</p>
               </div>
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <div className="text-2xl font-bold">3</div>
-              <div className="text-xs bg-white/20 px-2 py-1 rounded-full">Open</div>
+              <div className="text-2xl font-bold text-gray-900">3</div>
+              <div className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Open</div>
             </div>
           </CardContent>
         </Card>
 
         <Card 
-          className={`bg-gradient-to-br from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:shadow-xl ${isAnimating ? 'animate-pulse' : ''}`}
+          className={`bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:border-green-300 transition-all duration-300 cursor-pointer hover:shadow-md ${isAnimating ? 'animate-pulse' : ''}`}
           onClick={() => handleCardClick('/customer/dashboard/ratings')}
         >
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                <Star className="h-6 w-6" />
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <Star className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg">Rate Service</h3>
-                <p className="text-green-100">Rate your experience</p>
+                <h3 className="font-semibold text-lg text-gray-900">Rate Service</h3>
+                <p className="text-gray-600">Rate your experience</p>
               </div>
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <div className="text-2xl font-bold">4.8</div>
-              <div className="text-xs bg-white/20 px-2 py-1 rounded-full">⭐</div>
+              <div className="text-2xl font-bold text-gray-900">4.8</div>
+              <div className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">⭐</div>
             </div>
           </CardContent>
         </Card>
 
         <Card 
-          className={`bg-gradient-to-br from-purple-500 to-purple-600 text-white hover:from-purple-600 hover:to-purple-700 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:shadow-xl ${isAnimating ? 'animate-pulse' : ''}`}
+          className={`bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 hover:border-purple-300 transition-all duration-300 cursor-pointer hover:shadow-md ${isAnimating ? 'animate-pulse' : ''}`}
           onClick={() => handleCardClick('/customer/dashboard/services')}
         >
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                <Monitor className="h-6 w-6" />
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Monitor className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg">System Status</h3>
-                <p className="text-purple-100">Check service status</p>
+                <h3 className="font-semibold text-lg text-gray-900">System Status</h3>
+                <p className="text-gray-600">Check service status</p>
               </div>
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <div className="text-2xl font-bold">99.9%</div>
-              <div className="text-xs bg-white/20 px-2 py-1 rounded-full">🟢</div>
+              <div className="text-2xl font-bold text-gray-900">99.9%</div>
+              <div className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">🟢</div>
             </div>
           </CardContent>
         </Card>
 
         <Card 
-          className={`bg-gradient-to-br from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:shadow-xl ${isAnimating ? 'animate-pulse' : ''}`}
+          className={`bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 hover:border-orange-300 transition-all duration-300 cursor-pointer hover:shadow-md ${isAnimating ? 'animate-pulse' : ''}`}
           onClick={() => handleCardClick('/customer/dashboard/help')}
         >
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                <HelpCircle className="h-6 w-6" />
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <HelpCircle className="h-6 w-6 text-orange-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg">Get Help</h3>
-                <p className="text-orange-100">Find answers and support</p>
+                <h3 className="font-semibold text-lg text-gray-900">Get Help</h3>
+                <p className="text-gray-600">Find answers and support</p>
               </div>
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <div className="text-2xl font-bold">24/7</div>
-              <div className="text-xs bg-white/20 px-2 py-1 rounded-full">💬</div>
+              <div className="text-2xl font-bold text-gray-900">24/7</div>
+              <div className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">💬</div>
             </div>
           </CardContent>
         </Card>
@@ -674,7 +674,7 @@ function DashboardContent({ data }: { data: any }) {
 
       {/* Enhanced Ticket Status Summary */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-red-500">
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-red-300 bg-red-50/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -682,14 +682,14 @@ function DashboardContent({ data }: { data: any }) {
                 <p className="text-3xl font-bold text-red-600">{data.openTickets}</p>
                 <p className="text-xs text-gray-500 mt-1">Requires attention</p>
               </div>
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center animate-pulse">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
                 <AlertTriangle className="h-6 w-6 text-red-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-yellow-500">
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-yellow-300 bg-yellow-50/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -698,13 +698,13 @@ function DashboardContent({ data }: { data: any }) {
                 <p className="text-xs text-gray-500 mt-1">Being worked on</p>
               </div>
               <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <Clock className="h-6 w-6 text-yellow-600 animate-spin" style={{ animationDuration: '3s' }} />
+                <Clock className="h-6 w-6 text-yellow-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-green-500">
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-green-300 bg-green-50/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -719,7 +719,7 @@ function DashboardContent({ data }: { data: any }) {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-blue-500">
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-blue-300 bg-blue-50/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>

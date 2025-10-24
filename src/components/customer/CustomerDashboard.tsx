@@ -164,11 +164,11 @@ export function CustomerDashboard({ className }: CustomerDashboardProps) {
       case 'urgent':
         return <Badge variant="destructive">Urgent</Badge>
       case 'high':
-        return <Badge className="bg-red-100 text-red-800">High</Badge>
+        return <Badge className="bg-red-50 text-red-700 border-red-200">High</Badge>
       case 'medium':
-        return <Badge className="bg-yellow-100 text-yellow-800">Medium</Badge>
+        return <Badge className="bg-yellow-50 text-yellow-700 border-yellow-200">Medium</Badge>
       case 'low':
-        return <Badge className="bg-green-100 text-green-800">Low</Badge>
+        return <Badge className="bg-green-50 text-green-700 border-green-200">Low</Badge>
       default:
         return <Badge variant="outline">{priority}</Badge>
     }
@@ -184,7 +184,7 @@ export function CustomerDashboard({ className }: CustomerDashboardProps) {
     if (diffHours < 0) {
       return <Badge variant="destructive">Overdue</Badge>
     } else if (diffHours < 24) {
-      return <Badge className="bg-yellow-100 text-yellow-800">Due Soon</Badge>
+      return <Badge className="bg-yellow-50 text-yellow-700 border-yellow-200">Due Soon</Badge>
     } else {
       return <Badge variant="outline">On Track</Badge>
     }
@@ -274,7 +274,7 @@ export function CustomerDashboard({ className }: CustomerDashboardProps) {
           </div>
           <div className="text-right">
             <div className="flex items-center space-x-2 mb-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-sm text-muted-foreground">Support Online</span>
             </div>
             <p className="text-sm text-muted-foreground">Avg Response: {customerStats.avgResolutionTime}h</p>

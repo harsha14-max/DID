@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Flowing Gradient Animation */
+@keyframes flowingGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 /* Performance optimizations for smooth animations */
 * {
   -webkit-font-smoothing: antialiased;

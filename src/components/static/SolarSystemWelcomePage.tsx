@@ -344,7 +344,16 @@ export function SolarSystemWelcomePage() {
 
       {/* Navigation */}
       <nav className="relative z-10 flex justify-between items-center p-6">
-        <CredXLogo className="h-8 w-auto" />
+        <div className="flex items-center space-x-3">
+          <CredXLogo className="h-8 w-auto" />
+          <span className={`text-3xl font-bold tracking-wide bg-clip-text text-transparent transition-all duration-500 ${
+            theme === 'light'
+              ? 'bg-gradient-to-r from-purple-600 via-violet-600 to-pink-600'
+              : 'bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400'
+          }`}>
+            credX
+          </span>
+        </div>
         
         <div className="flex items-center space-x-4">
           <button 
@@ -377,18 +386,13 @@ export function SolarSystemWelcomePage() {
         <div className="relative z-10 container mx-auto px-6 py-32 text-center">
           <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <motion.h1 
-              className={`text-7xl md:text-8xl font-bold mb-8 bg-clip-text text-transparent leading-tight transition-all duration-500 cursor-default ${
-                theme === 'light'
-                  ? 'bg-gradient-to-r from-purple-600 via-violet-600 to-pink-600 hover:from-pink-600 hover:via-violet-600 hover:to-purple-600'
-                  : 'bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 hover:from-pink-400 hover:via-purple-400 hover:to-blue-400'
-              }`}
-              animate={{
-                scale: [1, 1.05, 1],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
+              className="text-7xl md:text-8xl font-bold mb-8 leading-tight cursor-default"
+              style={{
+                color: theme === 'light' ? '#8b5cf6' : '#60a5fa',
+                border: 'none',
+                outline: 'none',
+                boxShadow: 'none',
+                textShadow: 'none'
               }}
             >
               credX

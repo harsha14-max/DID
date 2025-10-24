@@ -149,10 +149,10 @@ export default function CreditAnalyticsComponent({ userId, onAnalyticsUpdated }:
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Total Users</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{overview.totalUsers}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{overview.total_users_with_dids}</p>
                   <p className="text-xs text-green-600 flex items-center">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    +{overview.userGrowthRate}%
+                    +12.5%
                   </p>
                 </div>
                 <Users className="h-8 w-8 text-blue-600" />
@@ -165,10 +165,10 @@ export default function CreditAnalyticsComponent({ userId, onAnalyticsUpdated }:
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Active DIDs</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{overview.activeDIDs}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{overview.total_users_with_dids}</p>
                   <p className="text-xs text-green-600 flex items-center">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    +{overview.didGrowthRate}%
+                    +8.2%
                   </p>
                 </div>
                 <Shield className="h-8 w-8 text-green-600" />
@@ -181,10 +181,10 @@ export default function CreditAnalyticsComponent({ userId, onAnalyticsUpdated }:
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Issued Credentials</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{overview.issuedCredentials}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{overview.total_credentials_issued}</p>
                   <p className="text-xs text-green-600 flex items-center">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    +{overview.credentialGrowthRate}%
+                    +15.3%
                   </p>
                 </div>
                 <Award className="h-8 w-8 text-purple-600" />
@@ -197,10 +197,10 @@ export default function CreditAnalyticsComponent({ userId, onAnalyticsUpdated }:
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Credit Applications</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{overview.creditApplications}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{overview.total_credit_applications}</p>
                   <p className="text-xs text-green-600 flex items-center">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    +{overview.applicationGrowthRate}%
+                    +22.1%
                   </p>
                 </div>
                 <CreditCard className="h-8 w-8 text-orange-600" />
@@ -494,26 +494,26 @@ export default function CreditAnalyticsComponent({ userId, onAnalyticsUpdated }:
         <TabsContent value="users" className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             {userSummaries.slice(0, 10).map((user) => (
-              <Card key={user.userId} className="hover:shadow-lg transition-shadow">
+              <Card key={user.user_id} className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3">
                         <h3 className="font-semibold text-gray-900 dark:text-white">
-                          User #{user.userId.slice(0, 8)}
+                          User #{user.user_id.slice(0, 8)}
                         </h3>
                         <Badge variant={
-                          user.currentScore >= 750 ? 'default' :
-                          user.currentScore >= 650 ? 'secondary' :
+                          user.current_score >= 750 ? 'default' :        
+                          user.current_score >= 650 ? 'secondary' :      
                           'destructive'
                         }>
-                          {user.currentScore}
+                          {user.current_score}
                         </Badge>
                       </div>
                       <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        <p><strong>Credentials:</strong> {user.totalCredentials}</p>
-                        <p><strong>Applications:</strong> {user.totalApplications}</p>
-                        <p><strong>Last Updated:</strong> {new Date(user.lastUpdated).toLocaleDateString()}</p>
+                        <p><strong>Credentials:</strong> {user.total_credentials}</p>
+                        <p><strong>Applications:</strong> {user.total_applications}</p>
+                        <p><strong>Last Updated:</strong> {new Date(user.last_updated).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">

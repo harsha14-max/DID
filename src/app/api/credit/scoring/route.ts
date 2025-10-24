@@ -62,6 +62,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 })
     }
 
+    const supabase = createServerSupabaseClient()
+    
     // Get user's credentials
     const { data: credentials, error: credentialsError } = await supabase
       .from('verifiable_credentials')
@@ -78,12 +80,11 @@ export async function POST(request: NextRequest) {
     const scoreBreakdown = creditScoringAlgorithm.calculateScoreBreakdown(credentials || [])
 
     // Save score to history
-    const supabase = createServerSupabaseClient()
     const { data, error } = await supabase
       .from('credit_score_history')
       .insert({
         user_id,
-        score: scoreCalculation.totalScore,
+        score: scoreCalculation.final_score,
         calculation_method: calculation_method || 'standard',
         contributing_credentials: contributing_credentials || credentials?.map(c => c.id) || [],
         metadata: metadata || {}

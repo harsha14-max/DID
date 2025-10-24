@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     const user_id = searchParams.get('user_id')
     const circuit_type = searchParams.get('circuit_type')
     
+    const supabase = createServerSupabaseClient()
     let query = supabase.from('zkp_proofs').select('*')
     
     if (user_id) {

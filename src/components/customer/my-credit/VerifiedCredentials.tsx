@@ -35,7 +35,8 @@ import {
   TrendingUp,
   Star,
   Heart,
-  Smile
+  Smile,
+  Plus
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'

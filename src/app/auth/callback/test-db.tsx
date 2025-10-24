@@ -56,7 +56,7 @@ export function DatabaseTest() {
       
     } catch (error) {
       console.error('Database test error:', error)
-      setResult({ error: error.message })
+      setResult({ error: error instanceof Error ? error.message : 'Unknown error' })
     } finally {
       setLoading(false)
     }
